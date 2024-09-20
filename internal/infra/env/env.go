@@ -10,6 +10,7 @@ type Env struct {
 	DB_USER     string `mapstructure:"DB_USER"`
 	DB_PASSWORD string `mapstructure:"DB_PASSWORD"`
 	DB_NAME     string `mapstructure:"DB_NAME"`
+	APP_PORT    string `mapstructure:"APP_PORT"`
 }
 
 var AppEnv = getEnv()
