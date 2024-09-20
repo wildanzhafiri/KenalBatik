@@ -30,3 +30,12 @@ type UserParam struct {
 	Username string `json:"username"`
 	Email    string `json:"email"`
 }
+
+type UserLogin struct {
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
+type UserLoginResponse struct {
+	Token string `json:"token"`
+}
