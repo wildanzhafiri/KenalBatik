@@ -15,7 +15,7 @@ const (
 type User struct {
 	ID         uuid.UUID `json:"id"`
 	Username   string    `json:"username"`
-	Email      string    `json:"email" gorm:"uniqueIndex"`
+	Email      string    `json:"email" gorm:"uniqueIndex type:varchar(100)"`
 	Password   string    `json:"password"`
 	Experience int       `json:"experience"`
 	Level      int       `json:"level"`

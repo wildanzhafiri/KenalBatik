@@ -48,6 +48,8 @@ func (m *Middleware) Authentication(c *gin.Context) {
 		return
 	}
 
-	c.Set("id", id)
+	idString := id.String()
+
+	c.Set("id", idString)
 	c.Next()
 }

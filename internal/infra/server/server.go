@@ -6,6 +6,10 @@ import (
 	batikSvc "kenalbatik-be/internal/batik/service"
 	"kenalbatik-be/internal/infra/jwt"
 	"kenalbatik-be/internal/infra/oauth"
+	"kenalbatik-be/internal/middleware"
+	quizRest "kenalbatik-be/internal/quiz/interface/rest"
+	quizRepo "kenalbatik-be/internal/quiz/repository"
+	quizSvc "kenalbatik-be/internal/quiz/service"
 	userRest "kenalbatik-be/internal/user/interface/rest"
 	userRepo "kenalbatik-be/internal/user/repository"
 	userSvc "kenalbatik-be/internal/user/service"
@@ -39,13 +43,17 @@ func (s *server) Run(port string) {
 func (s *server) MountRoutes(db *gorm.DB) {
 	jwt := jwt.NewJWT()
 	oauth := oauth.Oauth
+	middleware := middleware.NewMiddleware(jwt)
 
 	batikRepo := batikRepo.NewBatikRepository(db)
 	userRepo := userRepo.NewUserepository(db)
+	quizRepo := quizRepo.NewQuizRepository(db)
 
 	batikService := batikSvc.NewBatikService(batikRepo)
 	userService := userSvc.NewUserService(userRepo, *jwt)
+	quizService := quizSvc.NewQuizService(userRepo, quizRepo)
 
 	batikRest.InitBatikHandler(s.app, batikService)
 	userRest.InitUserHandler(s.app, userService, oauth)
+	quizRest.InitQuizHandler(s.app, quizService, *middleware)
 }

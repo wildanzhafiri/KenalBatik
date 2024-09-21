@@ -42,19 +42,19 @@ func (s *quizService) GetQuizzes(ctx context.Context, userId uuid.UUID) ([]domai
 	switch user.Tier {
 	case domain.TIER1:
 		//where difficulty = easy
-		err = s.quizRepo.GetQuiz(ctx, quizzes, "DIFFICULTY = ?", []interface{}{domain.EASY})
+		err = s.quizRepo.GetQuiz(ctx, &quizzes, "DIFFICULTY = ?", []interface{}{domain.EASY})
 	case domain.TIER2:
 		//where difficulty = easy or medium
-		err = s.quizRepo.GetQuiz(ctx, quizzes, "DIFFICULTY = ? OR DIFFICULTY = ?", []interface{}{domain.EASY, domain.MEDIUM})
+		err = s.quizRepo.GetQuiz(ctx, &quizzes, "DIFFICULTY = ? OR DIFFICULTY = ?", []interface{}{domain.EASY, domain.MEDIUM})
 	case domain.TIER3:
 		//where difficulty = medium
-		err = s.quizRepo.GetQuiz(ctx, quizzes, "DIFFICULTY = ?", []interface{}{domain.MEDIUM})
+		err = s.quizRepo.GetQuiz(ctx, &quizzes, "DIFFICULTY = ?", []interface{}{domain.MEDIUM})
 	case domain.TIER4:
 		//where difficulty = medium or hard
-		err = s.quizRepo.GetQuiz(ctx, quizzes, "DIFFICULTY = ? OR DIFFICULTY = ?", []interface{}{domain.MEDIUM, domain.HARD})
+		err = s.quizRepo.GetQuiz(ctx, &quizzes, "DIFFICULTY = ? OR DIFFICULTY = ?", []interface{}{domain.MEDIUM, domain.HARD})
 	case domain.TIER5:
 		//where difficulty = hard
-		err = s.quizRepo.GetQuiz(ctx, quizzes, "DIFFICULTY = ?", []interface{}{domain.HARD})
+		err = s.quizRepo.GetQuiz(ctx, &quizzes, "DIFFICULTY = ?", []interface{}{domain.HARD})
 	}
 	if err != nil {
 		return nil, err

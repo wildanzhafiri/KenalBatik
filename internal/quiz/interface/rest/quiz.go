@@ -11,26 +11,32 @@ import (
 
 type QuizHandler struct {
 	quizService service.QuizService
-	middleware middleware.Middleware
+	middleware  middleware.Middleware
 }
 
 func InitQuizHandler(app *gin.Engine, quizSvc service.QuizService, middleware middleware.Middleware) {
 	handler := QuizHandler{
 		quizService: quizSvc,
-		middleware: middleware,
+		middleware:  middleware,
 	}
 
 	quizGroup := app.Group("api/v1/quizzes")
 	{
-		quizGroup.GET("", middleware.Authentication , handler.GetQuizzes)
+		quizGroup.GET("", middleware.Authentication, handler.GetQuizzes)
 		quizGroup.POST("/check", middleware.Authentication, handler.CheckAnswer)
 	}
 }
 
 func (h *QuizHandler) GetQuizzes(c *gin.Context) {
-	//Get id from context
-	idString := c.MustGet("id")
-	id := uuid.MustParse(idString.(string))
+	idString := c.GetString("id")
+
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
 
 	res, err := h.quizService.GetQuizzes(c.Request.Context(), id)
 	if err != nil {
@@ -47,12 +53,18 @@ func (h *QuizHandler) GetQuizzes(c *gin.Context) {
 }
 
 func (h *QuizHandler) CheckAnswer(c *gin.Context) {
-	idString := c.MustGet("id")
-	id := uuid.MustParse(idString.(string))
+	idString := c.GetString("id")
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
 
 	var userAnswer domain.AnswerRequest
 
-	err := c.ShouldBindJSON(&userAnswer)
+	err = c.ShouldBindJSON(&userAnswer)
 	if err != nil {
 		c.JSON(400, gin.H{
 			"message": err.Error(),
