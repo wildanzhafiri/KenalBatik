@@ -16,6 +16,7 @@ import (
 type UserService interface {
 	RegisterUser(ctx context.Context, userRegister domain.UserRegister) error
 	Login(ctx context.Context, userLogin domain.UserLogin) (domain.UserLoginResponse, error)
+	Oauth(ctx context.Context, user domain.UserOauth) (domain.UserLoginResponse, error)
 }
 
 type userService struct {
@@ -87,6 +88,45 @@ func (s *userService) Login(ctx context.Context, userLogin domain.UserLogin) (do
 	}
 
 	token, err := s.jwt.GenerateToken(user.ID)
+	if err != nil {
+		return domain.UserLoginResponse{}, err
+	}
+
+	res := domain.UserLoginResponse{
+		Token: token,
+	}
+
+	return res, nil
+}
+
+func (s *userService) Oauth(ctx context.Context, user domain.UserOauth) (domain.UserLoginResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	var userDomain domain.User
+
+	err := s.userRepo.FindUser(ctx, &userDomain, domain.UserParam{Email: user.Email})
+	if err != nil {
+		if err != gorm.ErrRecordNotFound {
+			return domain.UserLoginResponse{}, err
+		}
+
+		newUser := domain.User{
+			ID:       uuid.New(),
+			Username: user.Name,
+			Email:    user.Email,
+			Experience: 0,
+			Level: 1,
+			Tier: domain.TIER1,
+		}
+
+		err = s.userRepo.CreateUser(ctx, newUser)
+		if err != nil {
+			return domain.UserLoginResponse{}, err
+		}
+	}
+
+	token, err := s.jwt.GenerateToken(userDomain.ID)
 	if err != nil {
 		return domain.UserLoginResponse{}, err
 	}

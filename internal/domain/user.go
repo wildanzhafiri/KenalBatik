@@ -39,3 +39,16 @@ type UserLogin struct {
 type UserLoginResponse struct {
 	Token string `json:"token"`
 }
+
+type OauthRedirectLink struct {
+	RedirectLink string `json:"redirect_link"`
+}
+
+type UserOauth struct {
+	Email       string `json:"email" gorm:"primary key"`
+	Family_name string `json:"family_name"`
+	Given_name  string `json:"given_name"`
+	Id          string `json:"id"`
+	Name        string `json:"name"`
+	Picture     string `json:"picture"`
+}

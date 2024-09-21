@@ -5,6 +5,7 @@ import (
 	batikRepo "kenalbatik-be/internal/batik/repository"
 	batikSvc "kenalbatik-be/internal/batik/service"
 	"kenalbatik-be/internal/infra/jwt"
+	"kenalbatik-be/internal/infra/oauth"
 	userRest "kenalbatik-be/internal/user/interface/rest"
 	userRepo "kenalbatik-be/internal/user/repository"
 	userSvc "kenalbatik-be/internal/user/service"
@@ -37,6 +38,7 @@ func (s *server) Run(port string) {
 
 func (s *server) MountRoutes(db *gorm.DB) {
 	jwt := jwt.NewJWT()
+	oauth := oauth.Oauth
 
 	batikRepo := batikRepo.NewBatikRepository(db)
 	userRepo := userRepo.NewUserepository(db)
@@ -45,5 +47,5 @@ func (s *server) MountRoutes(db *gorm.DB) {
 	userService := userSvc.NewUserService(userRepo, *jwt)
 
 	batikRest.InitBatikHandler(s.app, batikService)
-	userRest.InitUserHandler(s.app, userService)
+	userRest.InitUserHandler(s.app, userService, oauth)
 }
