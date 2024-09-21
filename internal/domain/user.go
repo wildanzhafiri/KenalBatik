@@ -19,7 +19,7 @@ type User struct {
 	Password   string    `json:"password"`
 	Experience int       `json:"experience"`
 	Level      int       `json:"level"`
-	Tier       UserTier  `json:"tier" gorm:"type:ENUM('TIER1', 'TIER2', 'TIER3')"`
+	Tier       UserTier  `json:"tier" gorm:"type:ENUM('TIER1', 'TIER2', 'TIER3', 'TIER4', 'TIER5')"`
 }
 
 type UserRegister struct {
