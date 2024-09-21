@@ -10,6 +10,7 @@ type Batik struct {
 }
 
 type BatikParams struct {
+	ID       int    `json:"id"`
 	Province string `json:"province"`
 	Island   string `json:"island"`
 }

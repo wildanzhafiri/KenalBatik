@@ -9,6 +9,7 @@ import (
 
 type BatikRepository interface {
 	FindAll(ctx context.Context, batiks *[]domain.Batik, batikParam domain.BatikParams) error
+	FindByID(ctx context.Context, batik *domain.Batik, batikID int) error
 }
 
 type batikRepository struct {
@@ -21,6 +22,15 @@ func NewBatikRepository(db *gorm.DB) BatikRepository {
 
 func (r *batikRepository) FindAll(ctx context.Context, batiks *[]domain.Batik, batikParam domain.BatikParams) error {
 	err := r.db.WithContext(ctx).Find(&batiks, batikParam).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *batikRepository) FindByID(ctx context.Context, batik *domain.Batik, batikID int) error {
+	err := r.db.WithContext(ctx).First(&batik, domain.BatikParams{ID: batikID}).Error
 	if err != nil {
 		return err
 	}
