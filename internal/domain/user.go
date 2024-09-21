@@ -8,6 +8,8 @@ const (
 	TIER1 UserTier = "TIER1"
 	TIER2 UserTier = "TIER2"
 	TIER3 UserTier = "TIER3"
+	TIER4 UserTier = "TIER4"
+	TIER5 UserTier = "TIER5"
 )
 
 type User struct {
@@ -27,8 +29,9 @@ type UserRegister struct {
 	ConfirmPassword string `json:"confirm_password" binding:"required"`
 }
 type UserParam struct {
-	Username string `json:"username"`
-	Email    string `json:"email"`
+	ID       uuid.UUID `json:"id"`
+	Username string    `json:"username"`
+	Email    string    `json:"email"`
 }
 
 type UserLogin struct {
