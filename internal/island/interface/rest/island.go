@@ -24,6 +24,15 @@ func InitIslandHandler(router *gin.Engine, islandService service.IslandService) 
 	island.GET("/:islandId", islandHandler.GetIslandByID)
 }
 
+// @Description Get All Island
+// @Tags islands
+// @Accept json
+// @Produce json
+// @Success 200 {object} helper.Response{data=domain.Island} "success get all island"
+// @Failure 404 {object} helper.ErrorResponse
+// @Failure 408 {object} helper.ErrorResponse
+// @Failure 500 {object} helper.ErrorResponse
+// @Router /api/v1/islands [get]
 func (h *IslandHandler) GetIslands(ctx *gin.Context) {
 	var (
 		err     error
@@ -54,6 +63,17 @@ func (h *IslandHandler) GetIslands(ctx *gin.Context) {
 	message = "success get all island"
 }
 
+// @Description Get Island By ID
+// @Tags islands
+// @Accept json
+// @Produce json
+// @Param islandId path int true "Island ID"
+// @Success 200 {object} helper.Response{data=domain.Island} "success get island by id"
+// @Failure 400 {object} helper.ErrorResponse
+// @Failure 404 {object} helper.ErrorResponse
+// @Failure 408 {object} helper.ErrorResponse
+// @Failure 500 {object} helper.ErrorResponse
+// @Router /api/v1/islands/{islandId} [get]
 func (h *IslandHandler) GetIslandByID(ctx *gin.Context) {
 	var (
 		err     error

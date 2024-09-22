@@ -32,15 +32,15 @@ func SendResponse(
 	err error,
 ) {
 	if err != nil {
-		sendErrorResponse(c, code, message, err)
+		SendErrorResponse(c, code, message, err)
 		return
 	} else {
-		sendSuccessResponse(c, code, message, data)
+		SendSuccessResponse(c, code, message, data)
 		return
 	}
 }
 
-func sendSuccessResponse(
+func SendSuccessResponse(
 	c *gin.Context,
 	code int,
 	message string,
@@ -54,7 +54,7 @@ func sendSuccessResponse(
 	})
 }
 
-func sendErrorResponse(
+func SendErrorResponse(
 	c *gin.Context,
 	code int,
 	message string,

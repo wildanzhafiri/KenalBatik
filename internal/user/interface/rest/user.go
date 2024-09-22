@@ -36,12 +36,24 @@ func InitUserHandler(app *gin.Engine, userSvc service.UserService, oauth oauth.O
 	user.GET("/:userId", userHandler.GetUserByID)
 }
 
+// @Description Register User
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param user body domain.UserRegister true "User Register"
+// @Success 200 {object} helper.Response{data=domain.User} "success register user"
+// @Failure 400 {object} helper.ErrorResponse
+// @Failure 404 {object} helper.ErrorResponse
+// @Failure 408 {object} helper.ErrorResponse
+// @Failure 500 {object} helper.ErrorResponse
+// @Router /api/v1/users/register [post]
 func (h *UserHandler) Register(ctx *gin.Context) {
 	var (
 		userRegister domain.UserRegister
 		err error
 		message string = "failed to register user"
 		code int = http.StatusBadRequest
+		res interface{}
 	)
 
 	sendResp := func() {
@@ -49,7 +61,7 @@ func (h *UserHandler) Register(ctx *gin.Context) {
 			ctx,
 			code,
 			message,
-			nil,
+			res,
 			err,
 		)
 	}
@@ -76,6 +88,17 @@ func (h *UserHandler) Register(ctx *gin.Context) {
 	message = "success register user"
 }
 
+// @Description Login User
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param user body domain.UserLogin true "User Login"
+// @Success 200 {object} helper.Response{data=domain.User} "success login user"
+// @Failure 400 {object} helper.ErrorResponse
+// @Failure 404 {object} helper.ErrorResponse
+// @Failure 408 {object} helper.ErrorResponse
+// @Failure 500 {object} helper.ErrorResponse
+// @Router /api/v1/users/login [post]
 func (h *UserHandler) Login(ctx *gin.Context) {
 	var (
 		userLogin domain.UserLogin
@@ -112,6 +135,12 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 	message = "success to login user"
 }
 
+// @Description Oauth Login
+// @Tags users
+// @Accept json
+// @Produce json
+// @Success 200 {object} helper.Response{data=domain.OauthRedirectLink} "success get oauth redirect link"
+// @Router /api/v1/users/oauth [get]
 func (h *UserHandler) Oauth(ctx *gin.Context) {
 	url := h.oauth.GetConfig().AuthCodeURL("state", oauth2.AccessTypeOffline)
 
@@ -119,15 +148,21 @@ func (h *UserHandler) Oauth(ctx *gin.Context) {
 		RedirectLink: url,
 	}
 
-	helper.SendResponse(
+	helper.SendSuccessResponse(
 		ctx,
 		http.StatusOK,
 		"please redirect to this URL",
 		resp,
-		nil,
 	)
 }
 
+// @Description Oauth Callback
+// @Tags users
+// @Accept json
+// @Produce json
+// @Success 301 {string} redirectURL "Redirects to frontend URL with code, message, and token if login is successful"
+// @Failure 301 {string} redirectURL "Redirects to frontend URL with code and error message if login fails"
+// @Router /api/v1/users/oauth/callback [get]
 func (h *UserHandler) OauthCallback(ctx *gin.Context) {
 	var(
 		err error
@@ -167,12 +202,24 @@ func (h *UserHandler) OauthCallback(ctx *gin.Context) {
 	message = "success to register/login user with oauth"
 }
 
+// @Description Forgot Password
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param user body domain.UserForgotPassword true "User Forgot Password"
+// @Success 200 {object} helper.Response "success forgot password"
+// @Failure 400 {object} helper.ErrorResponse
+// @Failure 404 {object} helper.ErrorResponse
+// @Failure 408 {object} helper.ErrorResponse
+// @Failure 500 {object} helper.ErrorResponse
+// @Router /api/v1/users/forgot-password [post]
 func (h *UserHandler) ForgotPassword(ctx *gin.Context) {
 	var (
 		userForgotPassword domain.UserForgotPassword
 		err error
 		message string = "failed to forgot password"
 		code int = http.StatusBadRequest
+		res interface{}
 	)
 
 	sendResp := func() {
@@ -180,7 +227,7 @@ func (h *UserHandler) ForgotPassword(ctx *gin.Context) {
 			ctx,
 			code,
 			message,
-			nil,
+			res,
 			err,
 		)
 	}
@@ -204,12 +251,25 @@ func (h *UserHandler) ForgotPassword(ctx *gin.Context) {
 	message = "please check your email to reset your password"
 }
 
+// @Description Reset Password
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param resetPasswordToken path string true "Reset Password Token"
+// @Param user body domain.ResetPassword true "Reset Password"
+// @Success 200 {object} helper.Response "success reset password"
+// @Failure 400 {object} helper.ErrorResponse
+// @Failure 404 {object} helper.ErrorResponse
+// @Failure 408 {object} helper.ErrorResponse
+// @Failure 500 {object} helper.ErrorResponse
+// @Router /api/v1/users/reset-password/{resetPasswordToken} [post]
 func (h *UserHandler) ResetPassword(ctx *gin.Context) {
 	var (
 		userResetPassword domain.ResetPassword
 		err error
 		message string = "failed to reset password"
 		code int = http.StatusBadRequest
+		res interface{}
 	)
 
 	sendResp := func() {
@@ -217,7 +277,7 @@ func (h *UserHandler) ResetPassword(ctx *gin.Context) {
 			ctx,
 			code,
 			message,
-			nil,
+			res,
 			err,
 		)
 	}
@@ -246,6 +306,18 @@ func (h *UserHandler) ResetPassword(ctx *gin.Context) {
 	message = "success reset password"
 }
 
+// @Description Get User By ID
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param userId path string true "User ID"
+// @Success 200 {object} helper.Response{data=domain.User} "success get user by id"
+// @Failure 400 {object} helper.ErrorResponse
+// @Failure 404 {object} helper.ErrorResponse
+// @Failure 408 {object} helper.ErrorResponse
+// @Failure 500 {object} helper.ErrorResponse
+// @Security Bearer
+// @Router /api/v1/users/{userId} [get]
 func (h *UserHandler) GetUserByID(ctx *gin.Context) {
 	var (
 		err error

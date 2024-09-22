@@ -13,5 +13,6 @@ func main() {
 	
 	server := server.NewServer()
 	server.MountRoutes(database.DB)
+	server.MountSwagger()
 	server.Run(env.AppEnv.APP_PORT)
 }

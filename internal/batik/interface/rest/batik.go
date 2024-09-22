@@ -19,12 +19,23 @@ func InitBatikHandler(router *gin.Engine, batikService service.BatikService) {
 		batikService: batikService,
 	}
 
-	batik := router.Group("api/v1/batik")
+	batik := router.Group("api/v1/batiks")
 
 	batik.GET("", batikHandler.GetAllBatik)
 	batik.GET("/:batikId", batikHandler.GetBatikByID)
 }
 
+// @Description Get All Batik
+// @Tags batiks
+// @Accept json
+// @Produce json
+// @Param from query string false "from"
+// @Success 200 {object} helper.Response{data=domain.BatikResponse} "success get all batik"
+// @Failure 400 {object} helper.ErrorResponse
+// @Failure 404 {object} helper.ErrorResponse
+// @Failure 408 {object} helper.ErrorResponse
+// @Failure 500 {object} helper.ErrorResponse
+// @Router /api/v1/batiks [get]
 func (b *BatikHandler) GetAllBatik(c *gin.Context) {
 	var (
 		err error
@@ -64,6 +75,17 @@ func (b *BatikHandler) GetAllBatik(c *gin.Context) {
 	message = "success get all batik"
 }
 
+// @Description Get Batik By ID
+// @Tags batiks
+// @Accept json
+// @Produce json
+// @Param batikId path int true "batik id"
+// @Success 200 {object} helper.Response{data=domain.BatikResponse} "success get batik by id"
+// @Failure 400 {object} helper.ErrorResponse
+// @Failure 404 {object} helper.ErrorResponse
+// @Failure 408 {object} helper.ErrorResponse
+// @Failure 500 {object} helper.ErrorResponse
+// @Router /api/v1/batiks/{batikId} [get]
 func (h *BatikHandler) GetBatikByID(c *gin.Context) {
 	var (
 		err error

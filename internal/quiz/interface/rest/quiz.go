@@ -29,6 +29,17 @@ func InitQuizHandler(app *gin.Engine, quizSvc service.QuizService, middleware mi
 	}
 }
 
+// @Description Get Quizzes
+// @Tags quizzes
+// @Accept json
+// @Produce json
+// @Success 200 {object} helper.Response{data=domain.Quiz} "success get quizzes"
+// @Failure 400 {object} helper.ErrorResponse
+// @Failure 404 {object} helper.ErrorResponse
+// @Failure 408 {object} helper.ErrorResponse
+// @Failure 500 {object} helper.ErrorResponse
+// @Security Bearer
+// @Router /api/v1/quizzes [get]
 func (h *QuizHandler) GetQuizzes(ctx *gin.Context) {
 	var(
 		err error
@@ -66,6 +77,18 @@ func (h *QuizHandler) GetQuizzes(ctx *gin.Context) {
 	message = "success to get quizzes"
 }
 
+// @Description Check Answer
+// @Tags quizzes
+// @Accept json
+// @Produce json
+// @Param answer body domain.AnswerRequest true "answer"
+// @Success 200 {object} helper.Response{data=domain.AnswerResponse} "success check answer"
+// @Failure 400 {object} helper.ErrorResponse
+// @Failure 404 {object} helper.ErrorResponse
+// @Failure 408 {object} helper.ErrorResponse
+// @Failure 500 {object} helper.ErrorResponse
+// @Security Bearer
+// @Router /api/v1/quizzes/check [post]
 func (h *QuizHandler) CheckAnswer(ctx *gin.Context) {
 	var (
 		err error

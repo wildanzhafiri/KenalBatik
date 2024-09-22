@@ -1,6 +1,8 @@
 package server
 
 import (
+	"kenalbatik-be/docs"
+	islandSvc "kenalbatik-be/internal/Island/service"
 	batikRest "kenalbatik-be/internal/batik/interface/rest"
 	batikRepo "kenalbatik-be/internal/batik/repository"
 	batikSvc "kenalbatik-be/internal/batik/service"
@@ -9,7 +11,6 @@ import (
 	"kenalbatik-be/internal/infra/oauth"
 	islandRest "kenalbatik-be/internal/island/interface/rest"
 	islandRepo "kenalbatik-be/internal/island/repository"
-	islandSvc "kenalbatik-be/internal/Island/service"
 	"kenalbatik-be/internal/middleware"
 	provinceRest "kenalbatik-be/internal/province/interface/rest"
 	provinceRepo "kenalbatik-be/internal/province/repository"
@@ -22,12 +23,15 @@ import (
 	userSvc "kenalbatik-be/internal/user/service"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
 )
 
 type Server interface {
 	Run(port string)
 	MountRoutes(db *gorm.DB)
+	MountSwagger()
 }
 
 type server struct {
@@ -45,6 +49,11 @@ func (s *server) Run(port string) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func (s *server) MountSwagger() {
+	docs.SwaggerInfo.BasePath = "api/v1"
+	s.app.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
 
 func (s *server) MountRoutes(db *gorm.DB) {

@@ -18,13 +18,22 @@ func InitProvinceHandler(router *gin.Engine, provinceService service.ProvinceSer
 	province := router.Group("api/v1/provinces")
 
 	province.GET("", provinceHandler.GetAllProvince)
-
+	province.GET("/:provinceId", provinceHandler.GetProvinceByID)
 }
 
 type ProvinceHandler struct {
 	provinceService service.ProvinceService
 }
 
+// @Description Get All Province
+// @Tags provinces
+// @Accept json
+// @Produce json
+// @Success 200 {object} helper.Response{data=domain.Province} "success get all province"
+// @Failure 404 {object} helper.ErrorResponse
+// @Failure 408 {object} helper.ErrorResponse
+// @Failure 500 {object} helper.ErrorResponse
+// @Router /api/v1/provinces [get]
 func (h *ProvinceHandler) GetAllProvince(ctx *gin.Context) {
 	var (
 		err     error
@@ -53,6 +62,17 @@ func (h *ProvinceHandler) GetAllProvince(ctx *gin.Context) {
 	message = "success get all province"
 }
 
+// @Description Get Province By ID
+// @Tags provinces
+// @Accept json
+// @Produce json
+// @Param id path int true "Province ID"
+// @Success 200 {object} helper.Response{data=domain.Province} "success get province by id"
+// @Failure 400 {object} helper.ErrorResponse
+// @Failure 404 {object} helper.ErrorResponse
+// @Failure 408 {object} helper.ErrorResponse
+// @Failure 500 {object} helper.ErrorResponse
+// @Router /api/v1/provinces/{provinceId} [get]
 func (h *ProvinceHandler) GetProvinceByID(ctx *gin.Context) {
 	var (
 		err     error
@@ -72,7 +92,7 @@ func (h *ProvinceHandler) GetProvinceByID(ctx *gin.Context) {
 	}
 	defer sendResp()
 
-	idString := ctx.Param("id")
+	idString := ctx.Param("provinceId")
 	id, err := strconv.Atoi(idString)
 	if err != nil {
 		return
