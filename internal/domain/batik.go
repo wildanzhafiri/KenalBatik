@@ -1,7 +1,7 @@
 package domain
 
 type Batik struct {
-	ID          int    `json:"id"`
+	ID          int    `json:"id" gorm:"primaryKey;autoIncrement"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Province    string `json:"province"`

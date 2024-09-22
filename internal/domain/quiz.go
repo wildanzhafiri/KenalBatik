@@ -11,7 +11,7 @@ const (
 )
 
 type Quiz struct {
-	ID         int        `json:"id"`
+	ID         int        `json:"id" gorm:"primaryKey;autoIncrement"`
 	Question   string     `json:"question"`
 	Answer     string     `json:"answer"`
 	OptionA    string     `json:"option_a"`
