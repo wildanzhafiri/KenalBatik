@@ -10,6 +10,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"golang.org/x/oauth2"
 )
 
@@ -32,6 +33,7 @@ func InitUserHandler(app *gin.Engine, userSvc service.UserService, oauth oauth.O
 	user.GET("/oauth/callback", userHandler.OauthCallback)
 	user.POST("/forgot-password", userHandler.ForgotPassword)
 	user.POST("/reset-password/:resetPasswordToken", userHandler.ResetPassword)
+	user.GET("/:userId", userHandler.GetUserByID)
 }
 
 func (h *UserHandler) Register(ctx *gin.Context) {
@@ -242,4 +244,39 @@ func (h *UserHandler) ResetPassword(ctx *gin.Context) {
 	}
 
 	message = "success reset password"
+}
+
+func (h *UserHandler) GetUserByID(ctx *gin.Context) {
+	var (
+		err error
+		code int = http.StatusBadRequest
+		message string = "failed to get user by id"
+		res interface{}
+	)
+
+	sendResp := func() {
+		helper.SendResponse(
+			ctx,
+			code,
+			message,
+			res,
+			err,
+		)
+	}
+	defer sendResp()
+
+	userIdString := ctx.Param("userId")
+	userId, err := uuid.Parse(userIdString)
+	if err != nil {
+		return
+	}
+
+	res, err = h.userSvc.GetUserByID(ctx.Request.Context(), userId)
+	code = domain.GetCode(err)
+
+	if err != nil {
+		return
+	}
+
+	message = "success get user by id"
 }

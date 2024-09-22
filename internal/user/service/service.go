@@ -19,6 +19,7 @@ type UserService interface {
 	Oauth(ctx context.Context, user domain.UserOauth) (string, error)
 	ForgotPassword(ctx context.Context, user domain.UserForgotPassword, referer string) error
 	ResetPassword(ctx context.Context, userReset domain.ResetPassword, resetPasswordToken string) error
+	GetUserByID(ctx context.Context, userId uuid.UUID) (domain.User, error)
 }
 
 type userService struct {
@@ -221,5 +222,20 @@ func (s *userService) ResetPassword(ctx context.Context, userReset domain.ResetP
 		return domain.ErrTimeout
 	default:
 		return err
+	}
+}
+
+func (s *userService) GetUserByID(ctx context.Context, userId uuid.UUID) (domain.User, error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	var user domain.User
+	err := s.userRepo.FindUser(ctx, &user, domain.UserParam{ID: userId})
+
+	select {
+	case <-ctx.Done():
+		return user, domain.ErrTimeout
+	default:
+		return user, err
 	}
 }
