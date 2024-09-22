@@ -30,6 +30,8 @@ func InitUserHandler(app *gin.Engine, userSvc service.UserService, oauth oauth.O
 	user.POST("/login", userHandler.Login)
 	user.GET("/oauth", userHandler.Oauth)
 	user.GET("/oauth/callback", userHandler.OauthCallback)
+	user.POST("/forgot-password", userHandler.ForgotPassword)
+	user.POST("/reset-password/:resetPasswordToken", userHandler.ResetPassword)
 }
 
 func (h *UserHandler) Register(ctx *gin.Context) {
@@ -161,4 +163,83 @@ func (h *UserHandler) OauthCallback(ctx *gin.Context) {
 	}
 
 	message = "success to register/login user with oauth"
+}
+
+func (h *UserHandler) ForgotPassword(ctx *gin.Context) {
+	var (
+		userForgotPassword domain.UserForgotPassword
+		err error
+		message string = "failed to forgot password"
+		code int = http.StatusBadRequest
+	)
+
+	sendResp := func() {
+		helper.SendResponse(
+			ctx,
+			code,
+			message,
+			nil,
+			err,
+		)
+	}
+	defer sendResp()
+
+	err = ctx.ShouldBindJSON(&userForgotPassword)
+
+	if err != nil {
+		return
+	}
+
+	referer := ctx.Request.Referer()
+
+	err = h.userSvc.ForgotPassword(ctx.Request.Context(), userForgotPassword, referer)
+	code = domain.GetCode(err)
+
+	if err != nil {
+		return
+	}
+
+	message = "please check your email to reset your password"
+}
+
+func (h *UserHandler) ResetPassword(ctx *gin.Context) {
+	var (
+		userResetPassword domain.ResetPassword
+		err error
+		message string = "failed to reset password"
+		code int = http.StatusBadRequest
+	)
+
+	sendResp := func() {
+		helper.SendResponse(
+			ctx,
+			code,
+			message,
+			nil,
+			err,
+		)
+	}
+	defer sendResp()
+
+	err = ctx.ShouldBindJSON(&userResetPassword)
+
+	if userResetPassword.Password != userResetPassword.ConfirmPassword {
+		err = domain.ErrPasswordNotMatch
+		return
+	}
+
+	if err != nil {
+		return
+	}
+
+	resetPasswordToken := ctx.Param("resetPasswordToken")
+
+	err = h.userSvc.ResetPassword(ctx.Request.Context(), userResetPassword, resetPasswordToken)
+	code = domain.GetCode(err)
+
+	if err != nil {
+		return
+	}
+
+	message = "success reset password"
 }

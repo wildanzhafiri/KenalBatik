@@ -1,9 +1,9 @@
 package rest
 
 import (
+	"kenalbatik-be/internal/Island/service"
 	"kenalbatik-be/internal/domain"
 	"kenalbatik-be/internal/infra/helper"
-	"kenalbatik-be/internal/island/service"
 	"net/http"
 	"strconv"
 

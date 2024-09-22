@@ -4,21 +4,22 @@ import (
 	batikRest "kenalbatik-be/internal/batik/interface/rest"
 	batikRepo "kenalbatik-be/internal/batik/repository"
 	batikSvc "kenalbatik-be/internal/batik/service"
+	"kenalbatik-be/internal/infra/gomail"
 	"kenalbatik-be/internal/infra/jwt"
 	"kenalbatik-be/internal/infra/oauth"
+	islandRest "kenalbatik-be/internal/island/interface/rest"
+	islandRepo "kenalbatik-be/internal/island/repository"
+	islandSvc "kenalbatik-be/internal/Island/service"
 	"kenalbatik-be/internal/middleware"
+	provinceRest "kenalbatik-be/internal/province/interface/rest"
+	provinceRepo "kenalbatik-be/internal/province/repository"
+	provinceSvc "kenalbatik-be/internal/province/service"
 	quizRest "kenalbatik-be/internal/quiz/interface/rest"
 	quizRepo "kenalbatik-be/internal/quiz/repository"
 	quizSvc "kenalbatik-be/internal/quiz/service"
 	userRest "kenalbatik-be/internal/user/interface/rest"
 	userRepo "kenalbatik-be/internal/user/repository"
 	userSvc "kenalbatik-be/internal/user/service"
-	provinceRest "kenalbatik-be/internal/province/interface/rest"
-	provinceRepo "kenalbatik-be/internal/province/repository"
-	provinceSvc "kenalbatik-be/internal/province/service"
-	islandRest "kenalbatik-be/internal/island/interface/rest"
-	islandRepo "kenalbatik-be/internal/island/repository"
-	islandSvc "kenalbatik-be/internal/island/service"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -50,6 +51,7 @@ func (s *server) MountRoutes(db *gorm.DB) {
 	jwt := jwt.NewJWT()
 	oauth := oauth.Oauth
 	middleware := middleware.NewMiddleware(jwt)
+	gomail := gomail.GoMail
 
 	batikRepo := batikRepo.NewBatikRepository(db)
 	userRepo := userRepo.NewUserepository(db)
@@ -58,7 +60,7 @@ func (s *server) MountRoutes(db *gorm.DB) {
 	islandRepo := islandRepo.NewIslandRepository(db)
 
 	batikService := batikSvc.NewBatikService(batikRepo)
-	userService := userSvc.NewUserService(userRepo, *jwt)
+	userService := userSvc.NewUserService(userRepo, *jwt, gomail)
 	quizService := quizSvc.NewQuizService(userRepo, quizRepo)
 	provinceService := provinceSvc.NewProvinceService(provinceRepo)
 	islandService := islandSvc.NewIslandService(islandRepo)

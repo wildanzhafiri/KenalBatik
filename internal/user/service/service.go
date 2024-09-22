@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"kenalbatik-be/internal/domain"
+	"kenalbatik-be/internal/infra/gomail"
+	"kenalbatik-be/internal/infra/helper"
 	"kenalbatik-be/internal/infra/jwt"
 	"kenalbatik-be/internal/user/repository"
 	"time"
@@ -15,17 +17,21 @@ type UserService interface {
 	RegisterUser(ctx context.Context, userRegister domain.UserRegister) error
 	Login(ctx context.Context, userLogin domain.UserLogin) (domain.UserLoginResponse, error)
 	Oauth(ctx context.Context, user domain.UserOauth) (string, error)
+	ForgotPassword(ctx context.Context, user domain.UserForgotPassword, referer string) error
+	ResetPassword(ctx context.Context, userReset domain.ResetPassword, resetPasswordToken string) error
 }
 
 type userService struct {
 	userRepo repository.Userepository
 	jwt      jwt.JWT
+	goMail   gomail.GoMailInterface
 }
 
-func NewUserService(userRepo repository.Userepository, jwt jwt.JWT) UserService {
+func NewUserService(userRepo repository.Userepository, jwt jwt.JWT, goMail gomail.GoMailInterface) UserService {
 	return &userService{
 		userRepo: userRepo,
 		jwt:      jwt,
+		goMail:   goMail,
 	}
 }
 
@@ -59,10 +65,12 @@ func (s *userService) RegisterUser(ctx context.Context, userRegister domain.User
 		Experience: 0,
 		Level:      1,
 		Tier:       domain.TIER1,
+		ForgotPasswordToken: "",
+		ForgotPasswordExpired: time.Date(1970, 1, 1, 0, 0, 0, 0, time.Local),
 	}
 
 	err = s.userRepo.CreateUser(ctx, user)
-	
+
 	select {
 	case <-ctx.Done():
 		return domain.ErrTimeout
@@ -124,6 +132,7 @@ func (s *userService) Oauth(ctx context.Context, user domain.UserOauth) (string,
 			Experience: 0,
 			Level:      1,
 			Tier:       domain.TIER1,
+			ForgotPasswordExpired: time.Date(1970, 1, 1, 0, 0, 0, 0, time.Local),
 		}
 
 		err = s.userRepo.CreateUser(ctx, newUser)
@@ -134,11 +143,83 @@ func (s *userService) Oauth(ctx context.Context, user domain.UserOauth) (string,
 
 	token, err := s.jwt.GenerateToken(userDomain.ID)
 
-
 	select {
 	case <-ctx.Done():
 		return "", domain.ErrTimeout
 	default:
 		return token, err
+	}
+}
+
+func (s *userService) ForgotPassword(ctx context.Context, userForgot domain.UserForgotPassword, referer string) error {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	var user domain.User
+
+	err := s.userRepo.FindUser(ctx, &user, domain.UserParam{Email: userForgot.Email})
+	if err != nil {
+		return err
+	}
+
+	forgotPasswordToken := helper.GenerateRandomString()
+	forgotPasswordTokenExpired := time.Now().Add(time.Hour * 1)
+
+	link := referer + "/reset-password/" + forgotPasswordToken
+	subject := "Reset Password"
+	HTMLbody := "<p>Click <a href='" + link + "'>here</a> to reset your password</p>"
+
+	updateUser := domain.User{
+		ForgotPasswordToken: 	forgotPasswordToken,
+		ForgotPasswordExpired: 	forgotPasswordTokenExpired,
+	}
+
+	err = s.userRepo.UpdateUser(ctx, updateUser, domain.UserParam{Email: user.Email})
+	if err != nil {
+		return err
+	}
+
+	err = s.goMail.SendEmail(subject, HTMLbody, user.Email)
+	
+	select {
+	case <-ctx.Done():
+		return domain.ErrTimeout
+	default:
+		return err
+	}
+}
+
+func (s *userService) ResetPassword(ctx context.Context, userReset domain.ResetPassword, resetPasswordToken string) error {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	var user domain.User
+
+	err := s.userRepo.FindUser(ctx, &user, domain.UserParam{ForgotPasswordToken: resetPasswordToken})
+	if err != nil {
+		return err
+	}
+
+	if user.ForgotPasswordExpired.Before(time.Now()) {
+		return domain.ErrTokenExpired
+	}
+
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(userReset.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	updateUser := domain.User{
+		Password: string(hashPassword),
+		ForgotPasswordExpired: time.Now(),
+	}
+
+	err = s.userRepo.UpdateUser(ctx, updateUser, domain.UserParam{ID: user.ID})
+	
+	select {
+	case <-ctx.Done():
+		return domain.ErrTimeout
+	default:
+		return err
 	}
 }

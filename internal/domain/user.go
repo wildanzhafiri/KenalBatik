@@ -1,6 +1,10 @@
 package domain
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type UserTier string
 
@@ -13,13 +17,15 @@ const (
 )
 
 type User struct {
-	ID         uuid.UUID `json:"id" gorm:"primaryKey"`
-	Username   string    `json:"username"`
-	Email      string    `json:"email" gorm:"uniqueIndex type:varchar(100)"`
-	Password   string    `json:"password"`
-	Experience int       `json:"experience"`
-	Level      int       `json:"level"`
-	Tier       UserTier  `json:"tier" gorm:"type:ENUM('TIER1', 'TIER2', 'TIER3', 'TIER4', 'TIER5')"`
+	ID                    uuid.UUID `json:"id" gorm:"primaryKey"`
+	Username              string    `json:"username"`
+	Email                 string    `json:"email" gorm:"uniqueIndex type:varchar(100)"`
+	Password              string    `json:"password"`
+	Experience            int       `json:"experience"`
+	Level                 int       `json:"level"`
+	Tier                  UserTier  `json:"tier" gorm:"type:ENUM('TIER1', 'TIER2', 'TIER3', 'TIER4', 'TIER5')"`
+	ForgotPasswordToken   string    `json:"forgot_password_token"`
+	ForgotPasswordExpired time.Time `json:"forgot_password_expired"`
 }
 
 type UserRegister struct {
@@ -29,9 +35,10 @@ type UserRegister struct {
 	ConfirmPassword string `json:"confirm_password" binding:"required"`
 }
 type UserParam struct {
-	ID       uuid.UUID `json:"id"`
-	Username string    `json:"username"`
-	Email    string    `json:"email"`
+	ID                  uuid.UUID `json:"id"`
+	Username            string    `json:"username"`
+	Email               string    `json:"email"`
+	ForgotPasswordToken string    `json:"forgot_password_token"`
 }
 
 type UserLogin struct {
@@ -54,4 +61,13 @@ type UserOauth struct {
 	Id          string `json:"id"`
 	Name        string `json:"name"`
 	Picture     string `json:"picture"`
+}
+
+type UserForgotPassword struct {
+	Email string `json:"email" binding:"required"`
+}
+
+type ResetPassword struct {
+	Password        string `json:"password" binding:"required"`
+	ConfirmPassword string `json:"confirm_password" binding:"required"`
 }

@@ -11,6 +11,7 @@ var (
 	ErrTimeout                = errors.New("request timeout")
 	ErrEmailAlreadyExist      = errors.New("email already exist")
 	ErrPasswordNotMatch       = errors.New("password not match")
+	ErrTokenExpired           = errors.New("token expired")
 )
 
 func GetCode(err error) int {
@@ -20,6 +21,7 @@ func GetCode(err error) int {
 
 	switch err {
 	case ErrInvalidEmailOrPassword,
+		ErrTokenExpired,
 		ErrPasswordNotMatch:
 		return http.StatusBadRequest
 	case ErrEmailAlreadyExist:
