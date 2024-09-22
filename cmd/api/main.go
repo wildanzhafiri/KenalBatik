@@ -9,7 +9,8 @@ import (
 func main() {
 	database.ConnectToDB()
 	database.Migrate()
-
+	database.SeedData(database.DB)
+	
 	server := server.NewServer()
 	server.MountRoutes(database.DB)
 	server.Run(env.AppEnv.APP_PORT)

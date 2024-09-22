@@ -6,27 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func SeedData(db *gorm.DB){
-	var totalBatiks int64
-	
-	if err := db.Model(domain.Batik{}).Count(&totalBatiks).Error; err != nil {
-		panic(err)
-	}
-
-	if totalBatiks == 0 {
-		generateBatik(db)
-	}
-
-	var totalQuizzes int64
-
-	if err := db.Model(domain.Quiz{}).Count(&totalQuizzes).Error; err != nil {
-		panic(err)
-	}
-
-	if totalQuizzes == 0 {
-		generateQuiz(db)
-	}
-
+func SeedData(db *gorm.DB) {
 	var totalProvinces int64
 
 	if err := db.Model(domain.Province{}).Count(&totalProvinces).Error; err != nil {
@@ -46,6 +26,27 @@ func SeedData(db *gorm.DB){
 	if totalIslands == 0 {
 		generateIsland(db)
 	}
+
+	var totalBatiks int64
+
+	if err := db.Model(domain.Batik{}).Count(&totalBatiks).Error; err != nil {
+		panic(err)
+	}
+
+	if totalBatiks == 0 {
+		generateBatik(db)
+	}
+
+	var totalQuizzes int64
+
+	if err := db.Model(domain.Quiz{}).Count(&totalQuizzes).Error; err != nil {
+		panic(err)
+	}
+
+	if totalQuizzes == 0 {
+		generateQuiz(db)
+	}
+
 }
 
 func generateBatik(db *gorm.DB) {
@@ -53,72 +54,72 @@ func generateBatik(db *gorm.DB) {
 		{
 			Name:        "Batik Betawi",
 			Description: "Batik khas Betawi dari Jakarta dengan motif yang terinspirasi dari kebudayaan Betawi.",
-			Province:    "Jakarta",
-			Island:      "Jawa",
-			Link_Image:   "",
+			ProvinceID:  11,
+			IslandID:    1,
+			Link_Image:  "",
 		},
 		{
 			Name:        "Batik Ondel-Ondel",
 			Description: "Batik yang menggambarkan simbol ondel-ondel, ciri khas Jakarta.",
-			Province:    "Jakarta",
-			Island:      "Jawa",
-			Link_Image:   "",
+			ProvinceID:  11,
+			IslandID:    1,
+			Link_Image:  "",
 		},
 		{
 			Name:        "Batik Surabaya",
 			Description: "Batik dengan motif alam dan budaya yang berasal dari Surabaya, Jawa Timur.",
-			Province:    "Jawa Timur",
-			Island:      "Jawa",
-			Link_Image:   "",
+			ProvinceID:  16,
+			IslandID:    1,
+			Link_Image:  "",
 		},
 		{
 			Name:        "Batik Madura",
 			Description: "Batik dengan motif yang kaya warna dari Pulau Madura, Jawa Timur.",
-			Province:    "Jawa Timur",
-			Island:      "Jawa",
-			Link_Image:   "",
+			ProvinceID:  16,
+			IslandID:    1,
+			Link_Image:  "",
 		},
 		{
 			Name:        "Batik Malang",
 			Description: "Batik dengan motif bunga dan gunung yang menggambarkan wilayah Malang.",
-			Province:    "Jawa Timur",
-			Island:      "Jawa",
-			Link_Image:   "",
+			ProvinceID:  16,
+			IslandID:    1,
+			Link_Image:  "",
 		},
 		{
 			Name:        "Batik Padang",
 			Description: "Batik dari Sumatera Barat yang terinspirasi dari alam Minangkabau.",
-			Province:    "Padang",
-			Island:      "Sumatra",
-			Link_Image:   "",
+			ProvinceID:  3,
+			IslandID:    2,
+			Link_Image:  "",
 		},
 		{
 			Name:        "Batik Minang",
 			Description: "Batik yang menggambarkan kekayaan budaya Minangkabau dari Padang.",
-			Province:    "Padang",
-			Island:      "Sumatra",
-			Link_Image:   "",
+			ProvinceID:  3,
+			IslandID:    2,
+			Link_Image:  "",
 		},
 		{
 			Name:        "Batik Pucuk Rebung",
 			Description: "Batik dengan motif pucuk rebung yang umum di Padang.",
-			Province:    "Padang",
-			Island:      "Sumatra",
-			Link_Image:   "",
+			ProvinceID:  3,
+			IslandID:    2,
+			Link_Image:  "",
 		},
 		{
 			Name:        "Batik Batavia",
 			Description: "Batik dengan motif yang mencerminkan sejarah dan budaya Batavia (Jakarta).",
-			Province:    "Jakarta",
-			Island:      "Jawa",
-			Link_Image:   "",
+			ProvinceID:  11,
+			IslandID:    1,
+			Link_Image:  "",
 		},
 		{
 			Name:        "Batik Tanjung Bumi",
 			Description: "Batik dengan motif khas pesisir yang berasal dari Madura, Jawa Timur.",
-			Province:    "Jawa Timur",
-			Island:      "Jawa",
-			Link_Image:   "",
+			ProvinceID:  16,
+			IslandID:    1,
+			Link_Image:  "",
 		},
 	}
 
@@ -241,4 +242,3 @@ func generateIsland(db *gorm.DB) {
 		panic(err)
 	}
 }
-

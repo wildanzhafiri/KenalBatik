@@ -3,26 +3,30 @@ package service
 import (
 	"context"
 	"kenalbatik-be/internal/domain"
-	"kenalbatik-be/internal/batik/repository"
+	batikRepo "kenalbatik-be/internal/batik/repository"
+	islandRepo "kenalbatik-be/internal/island/repository"
+	provinceRepo "kenalbatik-be/internal/province/repository"
 	"time"
 )
 
 type BatikService interface {
-	GetAllBatik(ctx context.Context, batikParam domain.BatikParams, from string) ([]domain.Batik, error)
-	GetBatikByID(ctx context.Context, batikID int) (domain.Batik, error)
+	GetAllBatik(ctx context.Context, batikParam domain.BatikParams, from string) ([]domain.BatikResponse, error)
+	GetBatikByID(ctx context.Context, batikID int) (domain.BatikResponse, error)
 }
 
 type batikService struct{
-	batikRepository repository.BatikRepository
+	batikRepository batikRepo.BatikRepository
+	islandRepository islandRepo.IslandRepository
+	provinceRepository provinceRepo.ProvinceRepository
 }
 
-func NewBatikService(batikRepo repository.BatikRepository) BatikService {
+func NewBatikService(batikRepo batikRepo.BatikRepository) BatikService {
 	return &batikService{
 		batikRepository: batikRepo,
 	}
 }
 
-func (s *batikService) GetAllBatik(ctx context.Context, batikParam domain.BatikParams, from string) ([]domain.Batik, error) {
+func (s *batikService) GetAllBatik(ctx context.Context, batikParam domain.BatikParams, from string) ([]domain.BatikResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
@@ -30,28 +34,50 @@ func (s *batikService) GetAllBatik(ctx context.Context, batikParam domain.BatikP
 
 	err := s.batikRepository.FindAll(ctx, &batiks, batikParam)
 	
+	var batikResponses []domain.BatikResponse
+	for _, batik := range batiks {
+		batikResponse := domain.BatikResponse{
+			ID: batik.ID,
+			Name: batik.Name,
+			Province: batik.Province.Name,
+			Island: batik.Island.Name,
+			Description: batik.Description,
+			Link_Image: batik.Link_Image,
+		}
+		batikResponses = append(batikResponses, batikResponse)
+	}
+
 	select {
 	case <-ctx.Done():
-		return batiks, domain.ErrTimeout
+		return batikResponses, domain.ErrTimeout
 	default:
-		return batiks, err
+		return batikResponses, err
 	}
 }
 
-func (s *batikService) GetBatikByID(ctx context.Context, batikId int) (domain.Batik, error) {
+func (s *batikService) GetBatikByID(ctx context.Context, batikId int) (domain.BatikResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	var batik domain.Batik
 	err := s.batikRepository.FindByID(ctx, &batik, batikId)
 	if err != nil {
-		return domain.Batik{}, err
+		return domain.BatikResponse{}, err
+	}
+
+	batikResponse := domain.BatikResponse{
+		ID: batik.ID,
+		Name: batik.Name,
+		Province: batik.Province.Name,
+		Island: batik.Island.Name,
+		Description: batik.Description,
+		Link_Image: batik.Link_Image,
 	}
 
 	select {
 	case <-ctx.Done():
-		return batik, domain.ErrTimeout
+		return batikResponse, domain.ErrTimeout
 	default:
-		return batik, err
+		return batikResponse, err
 	}
 }
