@@ -7,6 +7,7 @@ func Migrate() {
 		&domain.Batik{},
 		&domain.User{},
 		&domain.Quiz{},
+		&domain.Province{},
 	)
 	if err != nil {
 		panic(err)

@@ -26,6 +26,16 @@ func SeedData(db *gorm.DB){
 	if totalQuizzes == 0 {
 		generateQuiz(db)
 	}
+
+	var totalProvinces int64
+
+	if err := db.Model(domain.Province{}).Count(&totalProvinces).Error; err != nil {
+		panic(err)
+	}
+
+	if totalProvinces == 0 {
+		generateProvince(db)
+	}
 }
 
 func generateBatik(db *gorm.DB) {
@@ -150,4 +160,52 @@ func generateQuiz(db *gorm.DB) {
 		panic(err)
 	}
 }
+
+func generateProvince(db *gorm.DB) {
+	var provinces = []domain.Province{
+		{Name: "Aceh"},
+		{Name: "Sumatera Utara"},
+		{Name: "Sumatera Barat"},
+		{Name: "Riau"},
+		{Name: "Kepulauan Riau"},
+		{Name: "Jambi"},
+		{Name: "Sumatera Selatan"},
+		{Name: "Bangka Belitung"},
+		{Name: "Bengkulu"},
+		{Name: "Lampung"},
+		{Name: "DKI Jakarta"},
+		{Name: "Jawa Barat"},
+		{Name: "Banten"},
+		{Name: "Jawa Tengah"},
+		{Name: "DI Yogyakarta"},
+		{Name: "Jawa Timur"},
+		{Name: "Bali"},
+		{Name: "Nusa Tenggara Barat"},
+		{Name: "Nusa Tenggara Timur"},
+		{Name: "Kalimantan Barat"},
+		{Name: "Kalimantan Tengah"},
+		{Name: "Kalimantan Selatan"},
+		{Name: "Kalimantan Timur"},
+		{Name: "Kalimantan Utara"},
+		{Name: "Sulawesi Utara"},
+		{Name: "Gorontalo"},
+		{Name: "Sulawesi Tengah"},
+		{Name: "Sulawesi Barat"},
+		{Name: "Sulawesi Selatan"},
+		{Name: "Sulawesi Tenggara"},
+		{Name: "Maluku"},
+		{Name: "Maluku Utara"},
+		{Name: "Papua"},
+		{Name: "Papua Barat"},
+		{Name: "Papua Tengah"},
+		{Name: "Papua Pegunungan"},
+		{Name: "Papua Selatan"},
+		{Name: "Papua Barat Daya"},
+	}
+
+	if err := db.CreateInBatches(provinces, len(provinces)).Error; err != nil {
+		panic(err)
+	}
+}
+
 
