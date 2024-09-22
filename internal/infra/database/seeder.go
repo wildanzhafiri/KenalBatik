@@ -36,6 +36,16 @@ func SeedData(db *gorm.DB){
 	if totalProvinces == 0 {
 		generateProvince(db)
 	}
+
+	var totalIslands int64
+
+	if err := db.Model(domain.Island{}).Count(&totalIslands).Error; err != nil {
+		panic(err)
+	}
+
+	if totalIslands == 0 {
+		generateIsland(db)
+	}
 }
 
 func generateBatik(db *gorm.DB) {
@@ -208,4 +218,27 @@ func generateProvince(db *gorm.DB) {
 	}
 }
 
+func generateIsland(db *gorm.DB) {
+	island := []domain.Island{
+		{
+			Name: "Jawa",
+		},
+		{
+			Name: "Sumatra",
+		},
+		{
+			Name: "Kalimantan",
+		},
+		{
+			Name: "Sulawesi",
+		},
+		{
+			Name: "Papua",
+		},
+	}
+
+	if err := db.CreateInBatches(island, len(island)).Error; err != nil {
+		panic(err)
+	}
+}
 
