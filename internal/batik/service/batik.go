@@ -29,11 +29,13 @@ func (s *batikService) GetAllBatik(ctx context.Context, batikParam domain.BatikP
 	var batiks []domain.Batik
 
 	err := s.batikRepository.FindAll(ctx, &batiks, batikParam)
-	if err != nil {
-		return nil, err
+	
+	select {
+	case <-ctx.Done():
+		return batiks, domain.ErrTimeout
+	default:
+		return batiks, err
 	}
-
-	return batiks, nil
 }
 
 func (s *batikService) GetBatikByID(ctx context.Context, batikId int) (domain.Batik, error) {
@@ -46,5 +48,10 @@ func (s *batikService) GetBatikByID(ctx context.Context, batikId int) (domain.Ba
 		return domain.Batik{}, err
 	}
 
-	return batik, nil
+	select {
+	case <-ctx.Done():
+		return batik, domain.ErrTimeout
+	default:
+		return batik, err
+	}
 }

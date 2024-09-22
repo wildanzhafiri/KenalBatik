@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"errors"
 	"kenalbatik-be/internal/domain"
 	"kenalbatik-be/internal/infra/jwt"
 	"kenalbatik-be/internal/user/repository"
@@ -10,24 +9,23 @@ import (
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
 type UserService interface {
 	RegisterUser(ctx context.Context, userRegister domain.UserRegister) error
 	Login(ctx context.Context, userLogin domain.UserLogin) (domain.UserLoginResponse, error)
-	Oauth(ctx context.Context, user domain.UserOauth) (domain.UserLoginResponse, error)
+	Oauth(ctx context.Context, user domain.UserOauth) (string, error)
 }
 
 type userService struct {
 	userRepo repository.Userepository
-	jwt jwt.JWT
+	jwt      jwt.JWT
 }
 
 func NewUserService(userRepo repository.Userepository, jwt jwt.JWT) UserService {
 	return &userService{
 		userRepo: userRepo,
-		jwt: jwt,
+		jwt:      jwt,
 	}
 }
 
@@ -39,13 +37,13 @@ func (s *userService) RegisterUser(ctx context.Context, userRegister domain.User
 
 	err := s.userRepo.FindUser(ctx, &user, domain.UserParam{Email: userRegister.Email})
 	if err != nil {
-		if err != gorm.ErrRecordNotFound {
+		if err != domain.ErrRecordNotFound {
 			return err
 		}
 	}
 
 	if user.Email != "" {
-		return errors.New("email already registered")
+		return domain.ErrEmailAlreadyExist
 	}
 
 	hashPassword, err := bcrypt.GenerateFromPassword([]byte(userRegister.Password), bcrypt.DefaultCost)
@@ -54,21 +52,23 @@ func (s *userService) RegisterUser(ctx context.Context, userRegister domain.User
 	}
 
 	user = domain.User{
-		ID:       uuid.New(),
-		Username: userRegister.Username,
-		Email:    userRegister.Email,
-		Password: string(hashPassword),
+		ID:         uuid.New(),
+		Username:   userRegister.Username,
+		Email:      userRegister.Email,
+		Password:   string(hashPassword),
 		Experience: 0,
-		Level: 1,
-		Tier: domain.TIER1,
+		Level:      1,
+		Tier:       domain.TIER1,
 	}
 
 	err = s.userRepo.CreateUser(ctx, user)
-	if err != nil {
+	
+	select {
+	case <-ctx.Done():
+		return domain.ErrTimeout
+	default:
 		return err
 	}
-
-	return nil
 }
 
 func (s *userService) Login(ctx context.Context, userLogin domain.UserLogin) (domain.UserLoginResponse, error) {
@@ -79,27 +79,33 @@ func (s *userService) Login(ctx context.Context, userLogin domain.UserLogin) (do
 
 	err := s.userRepo.FindUser(ctx, &user, domain.UserParam{Email: userLogin.Email})
 	if err != nil {
+		if err == domain.ErrRecordNotFound {
+			return domain.UserLoginResponse{}, domain.ErrInvalidEmailOrPassword
+		}
+
 		return domain.UserLoginResponse{}, err
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userLogin.Password))
 	if err != nil {
-		return domain.UserLoginResponse{}, errors.New("password not match")
+		return domain.UserLoginResponse{}, domain.ErrInvalidEmailOrPassword
 	}
 
 	token, err := s.jwt.GenerateToken(user.ID)
-	if err != nil {
-		return domain.UserLoginResponse{}, err
-	}
 
 	res := domain.UserLoginResponse{
 		Token: token,
 	}
 
-	return res, nil
+	select {
+	case <-ctx.Done():
+		return domain.UserLoginResponse{}, domain.ErrTimeout
+	default:
+		return res, err
+	}
 }
 
-func (s *userService) Oauth(ctx context.Context, user domain.UserOauth) (domain.UserLoginResponse, error) {
+func (s *userService) Oauth(ctx context.Context, user domain.UserOauth) (string, error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
@@ -107,33 +113,32 @@ func (s *userService) Oauth(ctx context.Context, user domain.UserOauth) (domain.
 
 	err := s.userRepo.FindUser(ctx, &userDomain, domain.UserParam{Email: user.Email})
 	if err != nil {
-		if err != gorm.ErrRecordNotFound {
-			return domain.UserLoginResponse{}, err
+		if err != domain.ErrRecordNotFound {
+			return "", err
 		}
 
 		newUser := domain.User{
-			ID:       uuid.New(),
-			Username: user.Name,
-			Email:    user.Email,
+			ID:         uuid.New(),
+			Username:   user.Name,
+			Email:      user.Email,
 			Experience: 0,
-			Level: 1,
-			Tier: domain.TIER1,
+			Level:      1,
+			Tier:       domain.TIER1,
 		}
 
 		err = s.userRepo.CreateUser(ctx, newUser)
 		if err != nil {
-			return domain.UserLoginResponse{}, err
+			return "", err
 		}
 	}
 
 	token, err := s.jwt.GenerateToken(userDomain.ID)
-	if err != nil {
-		return domain.UserLoginResponse{}, err
-	}
 
-	res := domain.UserLoginResponse{
-		Token: token,
-	}
 
-	return res, nil
+	select {
+	case <-ctx.Done():
+		return "", domain.ErrTimeout
+	default:
+		return token, err
+	}
 }

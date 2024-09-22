@@ -3,6 +3,8 @@ package rest
 import (
 	"kenalbatik-be/internal/batik/service"
 	"kenalbatik-be/internal/domain"
+	"kenalbatik-be/internal/infra/helper"
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -24,54 +26,70 @@ func InitBatikHandler(router *gin.Engine, batikService service.BatikService) {
 }
 
 func (b *BatikHandler) GetAllBatik(c *gin.Context) {
-	from := c.Query("from")
+	var (
+		err error
+		code int = http.StatusBadRequest
+		message string = "failed to get all batik"
+		res interface{}
+		batikParam domain.BatikParams
+	)
 
-	var batikParam domain.BatikParams
+	sendResp := func ()  {
+		helper.SendResponse(
+			c, 
+			code, 
+			message, 
+			res, 
+			err,
+		)
+	}
+	defer sendResp()
+
+	from := c.Query("from")
 
 	if from != "" {
 		err := c.ShouldBindJSON(&batikParam)
 		if err != nil {
-			c.JSON(400, gin.H{
-				"message": err.Error(),
-			})
 			return
 		}
 	}
 
-	res, err := b.batikService.GetAllBatik(c, batikParam, from)
+	res, err = b.batikService.GetAllBatik(c, batikParam, from)
+	code = domain.GetCode(err)
+
 	if err != nil {
-		c.JSON(500, gin.H{
-			"message": err.Error(),
-		})
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"message": "success",
-		"data":    res,
-	})
+	message = "success get all batik"
 }
 
 func (h *BatikHandler) GetBatikByID(c *gin.Context) {
+	var (
+		err error
+		code int = http.StatusBadRequest
+		message string = "failed to get batik by id"
+		res interface{}
+	)
+
+	sendResp := func ()  {
+		helper.SendResponse(c, code, message, res, err)
+	}
+
+	defer sendResp()
+
 	batikID := c.Param("batikId")
 	batikIDInt, err := strconv.Atoi(batikID)
 	if err != nil {
-		c.JSON(400, gin.H{
-			"message": err.Error(),
-		})
 		return
 	}
 
-	res, err := h.batikService.GetBatikByID(c, batikIDInt)
+	res, err = h.batikService.GetBatikByID(c, batikIDInt)
+	code = domain.GetCode(err)
+
 	if err != nil {
-		c.JSON(500, gin.H{
-			"message": err.Error(),
-		})
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"message": "success",
-		"data":    res,
-	})
+	message = "success get batik by id"
 }

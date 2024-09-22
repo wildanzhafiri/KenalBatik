@@ -1,7 +1,6 @@
 package jwt
 
 import (
-	"fmt"
 	"kenalbatik-be/internal/infra/env"
 	"log"
 	"strconv"
@@ -23,14 +22,12 @@ type JWT struct {
 }
 
 type Claims struct {
-	Id       uuid.UUID
+	Id uuid.UUID
 	jwt.RegisteredClaims
 }
 
 func NewJWT() *JWT {
 	secretKey := env.AppEnv.JWT_SECRET
-
-	fmt.Println(env.AppEnv.JWT_EXPIRED)
 
 	expiredTime, err := strconv.Atoi(env.AppEnv.JWT_EXPIRED)
 	if err != nil {
@@ -45,7 +42,7 @@ func NewJWT() *JWT {
 
 func (j *JWT) GenerateToken(id uuid.UUID) (string, error) {
 	claim := Claims{
-		Id:       id,
+		Id: id,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(j.ExpiredTime)),
 		},

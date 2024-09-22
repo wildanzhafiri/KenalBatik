@@ -2,9 +2,12 @@ package rest
 
 import (
 	"encoding/json"
+	"fmt"
 	"kenalbatik-be/internal/domain"
+	"kenalbatik-be/internal/infra/helper"
 	"kenalbatik-be/internal/infra/oauth"
 	"kenalbatik-be/internal/user/service"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/oauth2"
@@ -30,61 +33,79 @@ func InitUserHandler(app *gin.Engine, userSvc service.UserService, oauth oauth.O
 }
 
 func (h *UserHandler) Register(ctx *gin.Context) {
-	var userRegister domain.UserRegister
+	var (
+		userRegister domain.UserRegister
+		err error
+		message string = "failed to register user"
+		code int = http.StatusBadRequest
+	)
 
-	err := ctx.ShouldBindJSON(&userRegister)
+	sendResp := func() {
+		helper.SendResponse(
+			ctx,
+			code,
+			message,
+			nil,
+			err,
+		)
+	}
+	defer sendResp()
+
+	err = ctx.ShouldBindJSON(&userRegister)
 
 	if userRegister.Password != userRegister.ConfirmPassword {
-		ctx.JSON(400, gin.H{
-			"message": "Password and confirm password must be the same",
-		})
+		err = domain.ErrPasswordNotMatch
 		return
 	}
 
 	if err != nil {
-		ctx.JSON(400, gin.H{
-			"message": err.Error(),
-		})
 		return
 	}
 
 	err = h.userSvc.RegisterUser(ctx.Request.Context(), userRegister)
+	code = domain.GetCode(err)
+
 	if err != nil {
-		ctx.JSON(500, gin.H{
-			"message": err.Error(),
-		})
 		return
 	}
 
-	ctx.JSON(200, gin.H{
-		"message": "success",
-	})
+	message = "success register user"
 }
 
 func (h *UserHandler) Login(ctx *gin.Context) {
-	var userLogin domain.UserLogin
+	var (
+		userLogin domain.UserLogin
+		err error
+		message string = "failed to login"
+		code int = http.StatusBadRequest
+		res interface{}
+	)
 
-	err := ctx.ShouldBindJSON(&userLogin)
+	sendResp := func() {
+		helper.SendResponse(
+			ctx,
+			code,
+			message,
+			res,
+			err,
+		)
+	}
+	defer sendResp()
+
+	err = ctx.ShouldBindJSON(&userLogin)
 
 	if err != nil {
-		ctx.JSON(400, gin.H{
-			"message": err.Error(),
-		})
 		return
 	}
 
-	res, err := h.userSvc.Login(ctx.Request.Context(), userLogin)
+	res, err = h.userSvc.Login(ctx.Request.Context(), userLogin)
+	code = domain.GetCode(err)
+
 	if err != nil {
-		ctx.JSON(500, gin.H{
-			"message": err.Error(),
-		})
 		return
 	}
 
-	ctx.JSON(200, gin.H{
-		"data":    res,
-		"message": "success",
-	})
+	message = "success to login user"
 }
 
 func (h *UserHandler) Oauth(ctx *gin.Context) {
@@ -94,19 +115,34 @@ func (h *UserHandler) Oauth(ctx *gin.Context) {
 		RedirectLink: url,
 	}
 
-	ctx.JSON(200, gin.H{
-		"data":    resp,
-		"status":  "success",
-		"message": "redirect to google login",
-	})
+	helper.SendResponse(
+		ctx,
+		http.StatusOK,
+		"please redirect to this URL",
+		resp,
+		nil,
+	)
 }
 
 func (h *UserHandler) OauthCallback(ctx *gin.Context) {
+	var(
+		err error
+		code int = http.StatusInternalServerError
+		message string = "failed to login"
+		res interface{}
+	)
+
+	sendResp := func() {
+		if err != nil {
+		ctx.Redirect(301, fmt.Sprintf("localhost:3000/oauth/login/redirect?code=%v&message=%v", code, message))
+		} else {
+			ctx.Redirect(301, fmt.Sprintf("localhost:3000/oauth/login/redirect?code=%v&message=%v&token=%v", code, message, res))
+		}
+	}
+	defer sendResp()
+
 	resp, err := h.oauth.GetUserInfo(ctx)
 	if err != nil {
-		ctx.JSON(500, gin.H{
-			"message": err.Error(),
-		})
 		return
 	}
 
@@ -114,22 +150,15 @@ func (h *UserHandler) OauthCallback(ctx *gin.Context) {
 
 	err = json.NewDecoder(resp.Body).Decode(&user)
 	if err != nil {
-		ctx.JSON(500, gin.H{
-			"message": err.Error(),
-		})
 		return
 	}
 
-	res, err := h.userSvc.Oauth(ctx.Request.Context(), user)
+	res, err = h.userSvc.Oauth(ctx.Request.Context(), user)
+	code = domain.GetCode(err)
+
 	if err != nil {
-		ctx.JSON(500, gin.H{
-			"message": err.Error(),
-		})
 		return
 	}
 
-	ctx.JSON(200, gin.H{
-		"data":    res,
-		"message": "success",
-	})
+	message = "success to register/login user with oauth"
 }

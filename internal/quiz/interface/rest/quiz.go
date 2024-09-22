@@ -2,8 +2,10 @@ package rest
 
 import (
 	"kenalbatik-be/internal/domain"
+	"kenalbatik-be/internal/infra/helper"
 	"kenalbatik-be/internal/middleware"
 	"kenalbatik-be/internal/quiz/service"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -27,61 +29,82 @@ func InitQuizHandler(app *gin.Engine, quizSvc service.QuizService, middleware mi
 	}
 }
 
-func (h *QuizHandler) GetQuizzes(c *gin.Context) {
-	idString := c.GetString("id")
+func (h *QuizHandler) GetQuizzes(ctx *gin.Context) {
+	var(
+		err error
+		code int = http.StatusBadRequest
+		message string = "failed to get quizzes"
+		res interface{}
+	)
+
+	sendResp := func() {
+		helper.SendResponse(
+			ctx,
+			code,
+			message,
+			res,
+			err,
+		)
+	}
+
+	defer sendResp()
+
+	idString := ctx.GetString("id")
 
 	id, err := uuid.Parse(idString)
 	if err != nil {
-		c.JSON(400, gin.H{
-			"message": err.Error(),
-		})
 		return
 	}
 
-	res, err := h.quizService.GetQuizzes(c.Request.Context(), id)
+	res, err = h.quizService.GetQuizzes(ctx.Request.Context(), id)
+	code = domain.GetCode(err)
+
 	if err != nil {
-		c.JSON(500, gin.H{
-			"message": err.Error(),
-		})
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"message": "success",
-		"data":    res,
-	})
+	message = "success to get quizzes"
 }
 
-func (h *QuizHandler) CheckAnswer(c *gin.Context) {
-	idString := c.GetString("id")
+func (h *QuizHandler) CheckAnswer(ctx *gin.Context) {
+	var (
+		err error
+		message string = "failed to check answer"
+		code int = http.StatusBadRequest
+		res interface{}
+	)
+
+	sendResp := func() {
+		helper.SendResponse(
+			ctx,
+			code,
+			message,
+			res,
+			err,
+		)
+	}
+
+	defer sendResp()
+
+	idString := ctx.GetString("id")
 	id, err := uuid.Parse(idString)
 	if err != nil {
-		c.JSON(400, gin.H{
-			"message": err.Error(),
-		})
 		return
 	}
 
 	var userAnswer domain.AnswerRequest
 
-	err = c.ShouldBindJSON(&userAnswer)
+	err = ctx.ShouldBindJSON(&userAnswer)
 	if err != nil {
-		c.JSON(400, gin.H{
-			"message": err.Error(),
-		})
 		return
 	}
 
-	res, err := h.quizService.CheckAnswer(c.Request.Context(), id, userAnswer)
+	res, err = h.quizService.CheckAnswer(ctx.Request.Context(), id, userAnswer)
+	code = domain.GetCode(err)
+
 	if err != nil {
-		c.JSON(500, gin.H{
-			"message": err.Error(),
-		})
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"message": "success",
-		"data":    res,
-	})
+	message = "success check answer"
 }
