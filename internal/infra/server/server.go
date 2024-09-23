@@ -2,7 +2,7 @@ package server
 
 import (
 	"kenalbatik-be/docs"
-	islandSvc "kenalbatik-be/internal/Island/service"
+	islandSvc "kenalbatik-be/internal/island/service"
 	batikRest "kenalbatik-be/internal/batik/interface/rest"
 	batikRepo "kenalbatik-be/internal/batik/repository"
 	batikSvc "kenalbatik-be/internal/batik/service"

@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"kenalbatik-be/internal/infra/env"
+	"log"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -15,6 +16,7 @@ func ConnectToDB() {
 
 	db, err  := gorm.Open(mysql.Open(open), &gorm.Config{})
 	if err != nil {
+		log.Fatalf("Error connecting to database, %s\nUser: %s\nPassword: %s", err, env.AppEnv.DB_USER, env.AppEnv.DB_PASSWORD)
 		panic(err)
 	}
 

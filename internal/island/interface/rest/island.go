@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"kenalbatik-be/internal/Island/service"
+	"kenalbatik-be/internal/island/service"
 	"kenalbatik-be/internal/domain"
 	"kenalbatik-be/internal/infra/helper"
 	"net/http"

@@ -1,6 +1,8 @@
 package env
 
 import (
+	"log"
+
 	"github.com/spf13/viper"
 )
 
@@ -28,6 +30,7 @@ func getEnv() *Env {
 
 	viper.SetConfigFile(".env")
 	if err := viper.ReadInConfig(); err != nil {
+		log.Fatalf("Error reading config file, %s", err)
 		panic(err)
 	}
 
