@@ -163,12 +163,11 @@ func (s *userService) ForgotPassword(ctx context.Context, userForgot domain.User
 		return err
 	}
 
-	forgotPasswordToken := helper.GenerateRandomString()
+	forgotPasswordToken := helper.GenerateRandomStringNumber()
 	forgotPasswordTokenExpired := time.Now().Add(time.Hour * 1)
 
-	link := referer + "/reset-password/" + forgotPasswordToken
 	subject := "Reset Password"
-	HTMLbody := "<p>Click <a href='" + link + "'>here</a> to reset your password</p>"
+	HTMLbody := "<p>PLease input this code to reset your password: " + forgotPasswordToken + "</p>"
 
 	updateUser := domain.User{
 		ForgotPasswordToken: 	forgotPasswordToken,

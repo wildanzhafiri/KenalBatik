@@ -68,6 +68,7 @@ type UserForgotPassword struct {
 }
 
 type ResetPassword struct {
-	Password        string `json:"password" binding:"required"`
-	ConfirmPassword string `json:"confirm_password" binding:"required"`
+	ForgotPasswordToken string `json:"forgot_password_token" binding:"required"`
+	Password            string `json:"password" binding:"required"`
+	ConfirmPassword     string `json:"confirm_password" binding:"required"`
 }
