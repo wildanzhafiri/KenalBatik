@@ -1,0 +1,717 @@
+definitions:
+  domain.AnswerRequest:
+    properties:
+      quiz_id:
+        items:
+          type: integer
+        type: array
+      user_answer:
+        items:
+          type: string
+        type: array
+      user_id:
+        type: string
+    type: object
+  domain.AnswerResponse:
+    properties:
+      correct_answer:
+        type: integer
+      user_experience:
+        type: integer
+      user_level:
+        type: integer
+      user_tier:
+        type: string
+    type: object
+  domain.BatikResponse:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      island:
+        type: string
+      link_image:
+        type: string
+      name:
+        type: string
+      province:
+        type: string
+    type: object
+  domain.Island:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  domain.OauthRedirectLink:
+    properties:
+      redirect_link:
+        type: string
+    type: object
+  domain.Province:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  domain.Quiz:
+    properties:
+      answer:
+        type: string
+      difficulty:
+        type: string
+      id:
+        type: integer
+      image_link:
+        type: string
+      option_a:
+        type: string
+      option_b:
+        type: string
+      option_c:
+        type: string
+      option_d:
+        type: string
+      question:
+        type: string
+    type: object
+  domain.ResetPassword:
+    properties:
+      confirm_password:
+        type: string
+      password:
+        type: string
+    required:
+    - confirm_password
+    - password
+    type: object
+  domain.User:
+    properties:
+      email:
+        type: string
+      experience:
+        type: integer
+      forgot_password_expired:
+        type: string
+      forgot_password_token:
+        type: string
+      id:
+        type: string
+      level:
+        type: integer
+      password:
+        type: string
+      tier:
+        type: string
+      username:
+        type: string
+    type: object
+  domain.UserForgotPassword:
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
+  domain.UserLogin:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  domain.UserRegister:
+    properties:
+      confirm_password:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - confirm_password
+    - email
+    - password
+    - username
+    type: object
+  helper.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      error:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  helper.Response:
+    properties:
+      code:
+        type: integer
+      data:
+        type: object
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+info:
+  contact: {}
+  license: {}
+paths:
+  /api/v1/batiks:
+    get:
+      consumes:
+      - application/json
+      description: Get All Batik
+      parameters:
+      - description: from
+        in: query
+        name: from
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success get all batik
+          schema:
+            allOf:
+            - $ref: '#/definitions/helper.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.BatikResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "408":
+          description: Request Timeout
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      tags:
+      - batiks
+  /api/v1/batiks/{batikId}:
+    get:
+      consumes:
+      - application/json
+      description: Get Batik By ID
+      parameters:
+      - description: batik id
+        in: path
+        name: batikId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success get batik by id
+          schema:
+            allOf:
+            - $ref: '#/definitions/helper.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.BatikResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "408":
+          description: Request Timeout
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      tags:
+      - batiks
+  /api/v1/islands:
+    get:
+      consumes:
+      - application/json
+      description: Get All Island
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success get all island
+          schema:
+            allOf:
+            - $ref: '#/definitions/helper.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Island'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "408":
+          description: Request Timeout
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      tags:
+      - islands
+  /api/v1/islands/{islandId}:
+    get:
+      consumes:
+      - application/json
+      description: Get Island By ID
+      parameters:
+      - description: Island ID
+        in: path
+        name: islandId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success get island by id
+          schema:
+            allOf:
+            - $ref: '#/definitions/helper.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Island'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "408":
+          description: Request Timeout
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      tags:
+      - islands
+  /api/v1/provinces:
+    get:
+      consumes:
+      - application/json
+      description: Get All Province
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success get all province
+          schema:
+            allOf:
+            - $ref: '#/definitions/helper.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Province'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "408":
+          description: Request Timeout
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      tags:
+      - provinces
+  /api/v1/provinces/{provinceId}:
+    get:
+      consumes:
+      - application/json
+      description: Get Province By ID
+      parameters:
+      - description: Province ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success get province by id
+          schema:
+            allOf:
+            - $ref: '#/definitions/helper.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Province'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "408":
+          description: Request Timeout
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      tags:
+      - provinces
+  /api/v1/quizzes:
+    get:
+      consumes:
+      - application/json
+      description: Get Quizzes
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success get quizzes
+          schema:
+            allOf:
+            - $ref: '#/definitions/helper.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.Quiz'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "408":
+          description: Request Timeout
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      security:
+      - Bearer: []
+      tags:
+      - quizzes
+  /api/v1/quizzes/check:
+    post:
+      consumes:
+      - application/json
+      description: Check Answer
+      parameters:
+      - description: answer
+        in: body
+        name: answer
+        required: true
+        schema:
+          $ref: '#/definitions/domain.AnswerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success check answer
+          schema:
+            allOf:
+            - $ref: '#/definitions/helper.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.AnswerResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "408":
+          description: Request Timeout
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      security:
+      - Bearer: []
+      tags:
+      - quizzes
+  /api/v1/users/{userId}:
+    get:
+      consumes:
+      - application/json
+      description: Get User By ID
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success get user by id
+          schema:
+            allOf:
+            - $ref: '#/definitions/helper.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "408":
+          description: Request Timeout
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      security:
+      - Bearer: []
+      tags:
+      - users
+  /api/v1/users/forgot-password:
+    post:
+      consumes:
+      - application/json
+      description: Forgot Password
+      parameters:
+      - description: User Forgot Password
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UserForgotPassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success forgot password
+          schema:
+            $ref: '#/definitions/helper.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "408":
+          description: Request Timeout
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      tags:
+      - users
+  /api/v1/users/login:
+    post:
+      consumes:
+      - application/json
+      description: Login User
+      parameters:
+      - description: User Login
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UserLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success login user
+          schema:
+            allOf:
+            - $ref: '#/definitions/helper.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "408":
+          description: Request Timeout
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      tags:
+      - users
+  /api/v1/users/oauth:
+    get:
+      consumes:
+      - application/json
+      description: Oauth Login
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success get oauth redirect link
+          schema:
+            allOf:
+            - $ref: '#/definitions/helper.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.OauthRedirectLink'
+              type: object
+      tags:
+      - users
+  /api/v1/users/oauth/callback:
+    get:
+      consumes:
+      - application/json
+      description: Oauth Callback
+      produces:
+      - application/json
+      responses:
+        "301":
+          description: Redirects to frontend URL with code and error message if login
+            fails
+          schema:
+            type: string
+      tags:
+      - users
+  /api/v1/users/register:
+    post:
+      consumes:
+      - application/json
+      description: Register User
+      parameters:
+      - description: User Register
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UserRegister'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success register user
+          schema:
+            allOf:
+            - $ref: '#/definitions/helper.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "408":
+          description: Request Timeout
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      tags:
+      - users
+  /api/v1/users/reset-password/{resetPasswordToken}:
+    post:
+      consumes:
+      - application/json
+      description: Reset Password
+      parameters:
+      - description: Reset Password Token
+        in: path
+        name: resetPasswordToken
+        required: true
+        type: string
+      - description: Reset Password
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ResetPassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success reset password
+          schema:
+            $ref: '#/definitions/helper.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "408":
+          description: Request Timeout
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/helper.ErrorResponse'
+      tags:
+      - users
+swagger: "2.0"
