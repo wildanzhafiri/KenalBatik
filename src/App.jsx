@@ -5,10 +5,12 @@ import Overview from './pages/Overview';
 import TentangKita from './pages/TentangKita';
 import Kuis from './pages/Kuis';
 import Cerita from './pages/Cerita';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/catalog" element={<Catalog />} />

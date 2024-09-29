@@ -12,20 +12,10 @@ const SignUpPopup = ({ onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://your-backend-url.com/auth/register', {
-        email,
-        username,
-        password,
-      });
       console.log('Sign up successful:', response.data);
-      onClose(); // Tutup modal sign up
     } catch (error) {
       console.error('Sign up failed:', error.response ? error.response.data : error.message);
     }
-  };
-
-  const handleGoogleLogin = () => {
-    window.location.href = 'https://your-backend-url.com/auth/google';
   };
 
   // Tutup popup jika pengguna mengklik di luar modal
@@ -82,7 +72,7 @@ const SignUpPopup = ({ onClose }) => {
             </form>
             <div className="text-center border-[0.5px] border-black/30 w-full my-6"></div>
             <div className="flex justify-center">
-              <button onClick={handleGoogleLogin} className="bg-white border rounded-lg py-2 px-4 flex items-center text-gray-700 hover:bg-gray-100 transition duration-200">
+              <button className="bg-white border rounded-lg py-2 px-4 flex items-center text-gray-700 hover:bg-gray-100 transition duration-200">
                 <img src={googleImage} alt="Google" className="w-5 mr-2" />
                 Continue with Google
               </button>

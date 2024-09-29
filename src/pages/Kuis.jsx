@@ -85,7 +85,7 @@ function Kuis() {
                     {questionData.options.map((option, index) => (
                       <button
                         key={index}
-                        className={`font-vidaloka border rounded-2xl text-lg lg:text-2xl py-2 px-4 w-full bg-[#f8a071]/30 hover:bg-orange-200 ${answers[questionIndex] === option ? 'bg-green-300' : ''}`}
+                        className={`font-vidaloka border rounded-2xl text-lg lg:text-2xl py-2 px-4 w-full bg-[#f8a071]/30 ${answers[questionIndex] === option ? 'bg-green-300' : ''}`}
                         onClick={() => handleAnswerClick(option, questionIndex)}
                       >
                         {option}

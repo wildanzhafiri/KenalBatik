@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import pulauData from '../components/data/PulauData'; // Import data batik dari file eksternal
-import Navbar from '../components/Navbar';
 import LoginPopup from '../components/auth/LoginPopup';
 import SignUpPopup from '../components/auth/SignUpPopup';
 import ForgotPasswordPopup from '../components/auth/ForgotPasswordPopup';
+import Navbar from '../components/Navbar';
+import Footer from '../sections/Footer';
 
 const Catalog = () => {
-  const [isLoginOpen, setIsLoginOpen] = useState(false); // State untuk login pop-up
-  const [isSignUpOpen, setIsSignUpOpen] = useState(false); // State untuk sign-up pop-up
-  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false); // State untuk forgot password pop-up
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isSignUpOpen, setIsSignUpOpen] = useState(false);
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
 
   const toggleLoginPopup = () => {
     setIsLoginOpen(!isLoginOpen);
@@ -120,6 +121,7 @@ const Catalog = () => {
           )}
         </div>
       </div>
+      <Footer />
     </section>
   );
 };
