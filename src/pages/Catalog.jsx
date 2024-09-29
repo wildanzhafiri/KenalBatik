@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import pulauData from '../components/data/PulauData'; // Import data batik dari file eksternal
 import Navbar from '../components/Navbar';
 import LoginPopup from '../components/auth/LoginPopup';
-import SignUpPopup from '../components/auth/SignUpPopUp';
+import SignUpPopup from '../components/auth/SignUpPopup';
 import ForgotPasswordPopup from '../components/auth/ForgotPasswordPopup';
 
 const Catalog = () => {
