@@ -29,6 +29,10 @@ Proyek ini bertujuan untuk mengenalkan batik dengan pendekatan yang berbeda, sek
 Kenal Batik sudah memiliki websitenya sendiri. Websitenya dapat diakses [disini](https://kenal-batik-ez1sxd1ru-wildan-zhafiris-projects.vercel.app/)
 
 ## How to use our website on localhost
+Untuk menjalankan kode kami, dibutuhkan 2 tools berikut:
+1. [Git](https://git-scm.com/downloads)
+2. [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+
 - ``git clone git@github.com:wildanzhafiri/KenalBatik.git``
 - jalankan codenya dengan command ``npm run dev``
 ## Overview Website
@@ -48,6 +52,9 @@ Berikut adalah tampilan dari website kami
 
 ### Register
 <img width="1343" alt="image" src="https://github.com/user-attachments/assets/71b49895-9e59-4cb6-b96e-342a60b6f4b1">
+
+### Forgot Password
+<img width="1343" alt="image" src="https://github.com/user-attachments/assets/944e50da-a8de-42fd-af28-2da75630d4c4">
 
 ### Katalog Page
 <img width="1345" alt="image" src="https://github.com/user-attachments/assets/acc4a9e1-5521-4c11-a5b0-eae946a04edb">
