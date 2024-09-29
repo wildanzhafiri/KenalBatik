@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import Profil from '../components/Profil';
 import { useState } from 'react';
 
-function Navbar({ onLoginClick, isLoggedIn, onLogout }) {
+const Navbar = ({ onLoginClick, isLoggedIn, onLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfilOpen, setIsProfilOpen] = useState(false); // Tambahkan state untuk mengontrol drop-down profil
 
@@ -113,6 +113,6 @@ function Navbar({ onLoginClick, isLoggedIn, onLogout }) {
       <div className={`border-b-[1px] border-black/40 transition-all duration-500 ${isMenuOpen ? 'mt-4' : 'mt-0'}`}></div>
     </nav>
   );
-}
+};
 
 export default Navbar;
