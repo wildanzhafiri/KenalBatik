@@ -22,7 +22,8 @@ Dalam website ini, pengguna dapat menjelajahi berbagai jenis batik dari seluruh 
 Proyek ini bertujuan untuk mengenalkan batik dengan pendekatan yang berbeda, sekaligus memanfaatkan teknologi untuk mendekatkan budaya lokal kepada masyarakat luas.
 
 ## User Flow
-Untuk melihat user flow kelompok kami bisa klik [disini](https://whimsical.com/simple-flowchart-Me7Fi4EjHpRZqTuXhtLPAx).
+![image](https://github.com/user-attachments/assets/047ef7cb-c930-40a5-835b-02a5106db15d)
+
 
 ## Website Kenal Batik
 Kenal Batik sudah memiliki websitenya sendiri. Websitenya dapat diakses [disini](https://kenal-batik-ez1sxd1ru-wildan-zhafiris-projects.vercel.app/)
