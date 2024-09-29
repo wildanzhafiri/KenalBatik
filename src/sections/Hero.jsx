@@ -8,7 +8,7 @@ import batik4 from '../assets/hero/background4.png';
 import bubleTail from '../assets/hero/bubbletail.svg';
 import ConfirmationPopup from '../components/ConfirmationPopup';
 import LoginPopup from '../components/auth/LoginPopup';
-import SignUpPopup from '../components/auth/SignUpPopUp';
+import SignUpPopup from '../components/auth/SignUpPopup';
 import ForgotPasswordPopup from '../components/auth/ForgotPasswordPopup';
 
 const Hero = ({ isLoggedIn }) => {
