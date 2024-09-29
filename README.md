@@ -33,8 +33,10 @@ Untuk menjalankan kode kami, dibutuhkan 2 tools berikut:
 1. [Git](https://git-scm.com/downloads)
 2. [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
-- ``git clone git@github.com:wildanzhafiri/KenalBatik.git``
-- jalankan codenya dengan command ``npm run dev``
+Jika sudah punya tools di atas, maka bisa dilanjutkan dengan melakukan
+
+1. ``git clone git@github.com:wildanzhafiri/KenalBatik.git``
+2.  jalankan codenya dengan command ``npm run dev``
 ## Overview Website
 Berikut adalah tampilan dari website kami
 
