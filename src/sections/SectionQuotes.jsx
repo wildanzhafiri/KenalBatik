@@ -1,7 +1,7 @@
 import Megamendung from '../assets/megamendung-batik.png';
 import { useTypewriter, Cursor } from 'react-simple-typewriter';
 
-export const SectionQuotes = () => {
+const SectionQuotes = () => {
   const [text] = useTypewriter({
     words: [
       '“Simbol kekuatan dan kebijaksanaan yang menyatukan kita dengan warisan budaya Jawa.”',
@@ -39,3 +39,5 @@ export const SectionQuotes = () => {
     </section>
   );
 };
+
+export default SectionQuotes;

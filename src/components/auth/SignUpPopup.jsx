@@ -4,7 +4,7 @@ import sideImage from '../../assets/signup-image.png';
 import Logo from '../../assets/logo.svg';
 import googleImage from '../../assets/Google Logo.svg';
 
-export default function SignUpPopup({ onClose }) {
+const SignUpPopup = ({ onClose }) => {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -97,4 +97,6 @@ export default function SignUpPopup({ onClose }) {
       </div>
     </div>
   );
-}
+};
+
+export default SignUpPopup;
