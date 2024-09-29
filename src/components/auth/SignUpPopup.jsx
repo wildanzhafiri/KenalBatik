@@ -41,11 +41,22 @@ export default function SignUpPopup({ onClose }) {
       className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
       onClick={handleOverlayClick} // Event untuk menutup jika klik di luar modal
     >
-      <div className="bg-[#f7f2ed] rounded-xl shadow-lg flex w-[1200px] h-[600px]  transform transition-transform duration-300 ease-in-out scale-100">
-        <div className="w-[600px] p-8 relative flex flex-col justify-center items-center">
-          <img src={Logo} width={40} height={40} alt="Kenal Batik" className="mb-8 absolute top-6 left-6" />
+      <div className="bg-[#f7f2ed] rounded-xl shadow-lg flex flex-col lg:flex-row w-[90%] max-w-[1200px] h-auto lg:h-[600px] transform transition-transform duration-300 ease-in-out scale-100 relative">
+        {/* Icon Close Button */}
+        <button
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition duration-200 z-50" // Added z-50 to ensure it's on top
+          onClick={onClose}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
 
-          <div className="w-[400px]">
+        <div className="w-full lg:w-[50%] p-8 relative flex flex-col justify-center items-center">
+          {/* Logo Kenal Batik, centered on mobile screens */}
+          <img src={Logo} width={40} height={40} alt="Kenal Batik" className="block mx-auto mb-4 sm:mb-8 sm:absolute sm:top-12 sm:left-10 lg:top-12 lg:left-12" />
+
+          <div className="w-full max-w-[400px] mt-4 sm:mt-10">
             <h2 className="text-xl font-semibold text-[#333]">Daftar</h2>
             <p className="mb-6 text-gray-500 text-sm">Daftar akun untuk meningkatkan pengetahuan batikmu!</p>
 
@@ -79,8 +90,9 @@ export default function SignUpPopup({ onClose }) {
           </div>
         </div>
 
-        <div className="bg-cover flex items-center justify-end p-6">
-          <img src={sideImage} alt="Batik Image" className="object-cover rounded-xl h-full" />
+        {/* Bagian Kanan (Gambar), hanya ditampilkan pada layar besar (lg ke atas) */}
+        <div className="bg-cover hidden lg:flex items-center justify-end p-10 w-full lg:w-[50%]">
+          <img src={sideImage} alt="Batik Image" className="object-cover rounded-xl w-full h-full" />
         </div>
       </div>
     </div>

@@ -57,11 +57,19 @@ export default function ForgotPasswordPopup({ onClose }) {
       className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
       onClick={handleOverlayClick} // Event untuk menutup jika klik di luar modal
     >
-      <div className="bg-[#f7f2ed] rounded-xl shadow-lg flex w-[1200px] h-[700px] transform transition-transform duration-300 ease-in-out scale-100">
+      <div className="bg-[#f7f2ed] rounded-xl shadow-lg flex flex-col lg:flex-row w-[90%] max-w-[1200px] h-auto lg:h-[700px] transform transition-transform duration-300 ease-in-out scale-100 relative">
+        {/* Icon Close Button */}
+        <button className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition duration-200 z-50" onClick={onClose}>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
         {/* Bagian kiri form */}
-        <div className="w-[600px] p-12 relative flex flex-col justify-center items-center">
-          <img src={Logo} width={40} height={40} alt="Kenal Batik" className="mb-12 absolute top-6 left-6" />
-          <div className="w-[450px]">
+        <div className="w-full lg:w-[50%] p-8 lg:p-12 relative flex flex-col justify-center items-center">
+          <img src={Logo} width={40} height={40} alt="Kenal Batik" className="block mx-auto mb-4 sm:mb-8 lg:mb-12 sm:absolute sm:top-12 sm:left-10 lg:top-12 lg:left-12" />
+
+          <div className="w-full max-w-[450px]">
             <h2 className="text-xl font-bold text-gray-800">Lupa Kata Sandi</h2>
             <p className="mb-3 text-[#b8b8b8] text-sm">Gapapa kok, namanya juga manusia suka lupa.</p>
 
@@ -96,10 +104,7 @@ export default function ForgotPasswordPopup({ onClose }) {
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
                 />
-                <span
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer" // Positioning the icon at the center vertically
-                  onClick={togglePasswordVisibility}
-                >
+                <span className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer" onClick={togglePasswordVisibility}>
                   {/* Icon untuk melihat kata sandi */}
                   <img src={Eye} alt="visible-icon" className="w-5 h-5" />
                 </span>
@@ -113,9 +118,9 @@ export default function ForgotPasswordPopup({ onClose }) {
           </div>
         </div>
 
-        {/* Bagian Kanan (Gambar) */}
-        <div className="w-[600px] bg-cover flex items-center justify-end p-6">
-          <img src={sideImage} alt="Batik Image" className="object-cover rounded-xl" />
+        {/* Bagian Kanan (Gambar), hanya ditampilkan pada layar besar (lg ke atas) */}
+        <div className="hidden lg:flex w-full lg:w-[70%] bg-cover items-center justify-end p-10">
+          <img src={sideImage} alt="Batik Image" className="object-cover rounded-xl w-full h-full" />
         </div>
       </div>
     </div>
