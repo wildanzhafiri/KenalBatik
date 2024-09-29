@@ -3,7 +3,7 @@ import { SectionQuotes } from '../sections/SectionQuotes.jsx';
 import Footer from '../sections/Footer.jsx';
 import { useState } from 'react';
 import LoginPopup from '../components/auth/LoginPopup.jsx';
-import SignUpPopup from '../components/auth/SignUpPopUp.jsx';
+import SignUpPopup from '../components/auth/SignUpPopup.jsx';
 import ForgotPasswordPopup from '../components/auth/ForgotPasswordPopup.jsx';
 import Peta from '../sections/Peta.jsx';
 import Sejarah from '../sections/Sejarah.jsx';

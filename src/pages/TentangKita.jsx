@@ -3,7 +3,7 @@ import imageRendra from '../assets/tentangkita/rendra.png';
 import imageNaufal from '../assets/tentangkita/naufal.png';
 import Navbar from '../components/Navbar';
 import LoginPopup from '../components/auth/LoginPopup';
-import SignUpPopup from '../components/auth/SignUpPopUp';
+import SignUpPopup from '../components/auth/SignUpPopup';
 import ForgotPasswordPopup from '../components/auth/ForgotPasswordPopup';
 import { useState } from 'react';
 import ppnaufal from '../assets/ppnaufal.png';
