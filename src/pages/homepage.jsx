@@ -1,4 +1,3 @@
-import Navbar from '../components/Navbar.jsx';
 import Hero from '../sections/Hero.jsx';
 import { SectionQuotes } from '../sections/SectionQuotes.jsx';
 import Footer from '../sections/Footer.jsx';
@@ -9,6 +8,7 @@ import ForgotPasswordPopup from '../components/auth/ForgotPasswordPopup.jsx';
 import Peta from '../sections/Peta.jsx';
 import Sejarah from '../sections/Sejarah.jsx';
 import IntroQuiz from '../sections/IntroQuiz.jsx';
+import Navbar from '../components/Navbar.jsx';
 
 function Homepage() {
   const [isLoginOpen, setIsLoginOpen] = useState(false); // State untuk login pop-up
