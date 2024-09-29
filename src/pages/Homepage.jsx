@@ -1,5 +1,5 @@
 import Hero from '../sections/Hero.jsx';
-import { SectionQuotes } from '../sections/SectionQuotes.jsx';
+import SectionQuotes from '../sections/SectionQuotes.jsx';
 import Footer from '../sections/Footer.jsx';
 import { useState } from 'react';
 import LoginPopup from '../components/auth/LoginPopup.jsx';
