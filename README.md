@@ -22,7 +22,7 @@ Dalam website ini, pengguna dapat menjelajahi berbagai jenis batik dari seluruh 
 Proyek ini bertujuan untuk mengenalkan batik dengan pendekatan yang berbeda, sekaligus memanfaatkan teknologi untuk mendekatkan budaya lokal kepada masyarakat luas.
 
 ## User Flow
-![image](https://github.com/user-attachments/assets/047ef7cb-c930-40a5-835b-02a5106db15d)
+![Simple Flowchart (2)](https://github.com/user-attachments/assets/4d281ca1-e6e6-4485-980a-7d94df1afb5f)
 
 
 ## Website Kenal Batik
@@ -37,7 +37,7 @@ Berikut adalah tampilan dari website kami
 ### Homepage
 
 <img width="1344" alt="image" src="https://github.com/user-attachments/assets/61c38f93-af12-44b8-bffa-4fb1cddc8754">
-<img width="1342" alt="image" src="https://github.com/user-attachments/assets/032d1d0b-6b5c-49f4-94b6-e53626ec2514">
+<img width="1344" alt="image" src="https://github.com/user-attachments/assets/65cb59e5-c342-4115-9d49-0529619953dc">
 <img width="1343" alt="image" src="https://github.com/user-attachments/assets/b8afa3c8-2845-47c1-bbf9-beaa8e831172">
 <img width="1345" alt="image" src="https://github.com/user-attachments/assets/dd569279-e070-42a0-839e-fe22319b633f">
 <img width="1344" alt="image" src="https://github.com/user-attachments/assets/ba897d68-8dc2-4ff0-b1a7-e90abc0a9784">
@@ -56,11 +56,11 @@ Berikut adalah tampilan dari website kami
 <img width="1345" alt="image" src="https://github.com/user-attachments/assets/114a50c3-5253-4543-b982-3b227516bdc4">
 
 ### Tentang Kita Page
-<img width="1346" alt="image" src="https://github.com/user-attachments/assets/7837fec2-d02d-4779-8f7c-3866482a264f">
+<img width="1342" alt="image" src="https://github.com/user-attachments/assets/032d1d0b-6b5c-49f4-94b6-e53626ec2514">
 
 ### Cerita Page
+<img width="1346" alt="image" src="https://github.com/user-attachments/assets/7837fec2-d02d-4779-8f7c-3866482a264f">
 <img width="1342" alt="image" src="https://github.com/user-attachments/assets/0d595235-0228-4ae5-872d-69c6744d7909">
-<img width="1344" alt="image" src="https://github.com/user-attachments/assets/65cb59e5-c342-4115-9d49-0529619953dc">
 
 ### Quiz Page
 <img width="1344" alt="image" src="https://github.com/user-attachments/assets/51c85f1e-a876-4ac2-ad9a-bfd73c1b4edc">
