@@ -75,7 +75,7 @@ const Peta = () => {
   return (
     <section className="w-full px-4 md:px-10 py-4 my-20">
       <div className="flex justify-center mb-10">
-        <div className="bg-[#fef1e2] px-12 py-3 rounded-3xl shadow-2xl text-lg md:text-xl lg:text-2xl lg:px-16 font-sofiasans">Knowledge</div>
+        <div className="bg-[#fef1e2] px-12 py-3 rounded-3xl shadow-2xl text-lg md:text-xl lg:text-2xl lg:px-16 font-sofiasans">Pengetahuan</div>
       </div>
       <h2 className="text-center my-3 font-vidaloka text-3xl md:text-5xl">Kenali Batik Daerahmu</h2>
 

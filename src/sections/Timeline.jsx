@@ -32,7 +32,7 @@ const Timeline = () => {
   return (
     <section>
       <div className="flex justify-center mb-10">
-        <div className="bg-[#fef1e2] px-12 py-3 rounded-3xl shadow-2xl text-lg md:text-xl lg:text-2xl lg:px-16 font-sofiasans">History</div>
+        <div className="bg-[#fef1e2] px-12 py-3 rounded-3xl shadow-2xl text-lg md:text-xl lg:text-2xl lg:px-16 font-sofiasans">Sejarah</div>
       </div>
 
       <div className="text-center font-vidaloka md:mx-0 mx-5">

@@ -55,7 +55,7 @@ const SectionQuotes = React.forwardRef((props, ref) => {
     <section ref={ref} className="w-full">
       <div className="px-4 md:px-20">
         <div className="flex justify-center mb-10">
-          <div className="bg-[#fef1e2] px-12 py-3 rounded-3xl shadow-2xl text-lg md:text-xl lg:text-2xl lg:px-16 font-sofiasans">Insight</div>
+          <div className="bg-[#fef1e2] px-12 py-3 rounded-3xl shadow-2xl text-lg md:text-xl lg:text-2xl lg:px-16 font-sofiasans">Wawasan</div>
         </div>
         <div className="container mx-auto bg-[#fff1e3] rounded-[24px] md:rounded-[48px] shadow-2xl lg:h-[600px]">
           <div className="flex flex-col md:flex lg:flex-row">
