@@ -60,7 +60,7 @@ const Peta = () => {
 
         // Fetch batik data for the selected island using the API
         try {
-          const response = await axios.get(`http://20.2.139.54/api/v1/batiks?island=${islandId}`);
+          const response = await axios.get(`/api/batiks?island=${islandId}`);
           setBatikData(response.data.data); // Assume API response contains a `data` array
         } catch (error) {
           console.error('Error fetching batik data:', error);
