@@ -8,13 +8,38 @@ const SignUpPopup = ({ onClose }) => {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
+  // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      setErrorMessage('Password dan konfirmasi password tidak sama.');
+      return;
+    }
     try {
+      const response = await axios.post('/api/users/register', {
+        username: username,
+        email: email,
+        password: password,
+        confirm_password: confirmPassword,
+      });
+
+      // Jika sukses, reset form dan tampilkan pesan sukses
+      setSuccessMessage('Pendaftaran berhasil!');
+      setErrorMessage('');
+      setEmail('');
+      setUsername('');
+      setPassword('');
+      setConfirmPassword('');
+
       console.log('Sign up successful:', response.data);
     } catch (error) {
+      // Tampilkan error jika ada
       console.error('Sign up failed:', error.response ? error.response.data : error.message);
+      setErrorMessage('Pendaftaran gagal, coba lagi.');
     }
   };
 
@@ -31,7 +56,7 @@ const SignUpPopup = ({ onClose }) => {
       className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
       onClick={handleOverlayClick} // Event untuk menutup jika klik di luar modal
     >
-      <div className="bg-[#f7f2ed] rounded-xl shadow-lg flex flex-col lg:flex-row w-[90%] max-w-[1200px] h-auto lg:h-[600px] transform transition-transform duration-300 ease-in-out scale-100 relative">
+      <div className="bg-[#f7f2ed] rounded-xl shadow-lg flex flex-col lg:flex-row w-[90%] max-w-[1200px] h-auto lg:h-[700px] transform transition-transform duration-300 ease-in-out scale-100 relative">
         {/* Icon Close Button */}
         <button
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition duration-200 z-50" // Added z-50 to ensure it's on top
@@ -65,6 +90,17 @@ const SignUpPopup = ({ onClose }) => {
                 <label className="block text-gray-700 font-semibold mb-2">Kata Sandi</label>
                 <input type="password" className="border rounded-lg w-full py-2 px-4 focus:outline-none focus:border-green-500" value={password} onChange={(e) => setPassword(e.target.value)} required />
               </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700 font-semibold mb-2">Konfirmasi Kata Sandi</label>
+                <input type="password" className="border rounded-lg w-full py-2 px-4 focus:outline-none focus:border-green-500" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+              </div>
+
+              {/* Tampilkan pesan error jika ada */}
+              {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+
+              {/* Tampilkan pesan sukses jika pendaftaran berhasil */}
+              {successMessage && <p className="text-green-500">{successMessage}</p>}
 
               <button type="submit" className="bg-[#092fb5] text-white mt-1 py-3 px-4 w-full rounded-lg font-semibold hover:bg-blue-700 transition duration-200">
                 Daftar

@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import sumatra from '../assets/pulau/sumatra.svg';
 import jawa from '../assets/pulau/jawa.svg';
 import kalimantan from '../assets/pulau/kalimantan.svg';
@@ -9,7 +10,6 @@ import sulawesi from '../assets/pulau/sulawesi.svg';
 import ntt from '../assets/pulau/ntt.svg';
 import bali from '../assets/pulau/bali.svg';
 import papua from '../assets/pulau/papua.svg';
-import pulauData from '../components/data/PulauData';
 
 const Peta = () => {
   const [selectedPulau, setSelectedPulau] = useState('');
@@ -17,7 +17,36 @@ const Peta = () => {
   const [isSlideVisible, setIsSlideVisible] = useState(false);
   const navigate = useNavigate();
 
-  const handlePulauClick = (pulau) => {
+  const getIslandId = (pulau) => {
+    switch (pulau) {
+      case 'Jawa':
+        return 1;
+      case 'Sumatra':
+        return 2;
+      case 'Kalimantan':
+        return 3;
+      case 'Sulawesi':
+        return 4;
+      case 'Papua':
+        return 5;
+      case 'Maluku':
+        return 6;
+      case 'NTB':
+        return 7;
+      case 'NTT':
+        return 8;
+      case 'Bali':
+        return 9;
+      default:
+        return null;
+    }
+  };
+
+  const handlePulauClick = async (pulau) => {
+    const islandId = getIslandId(pulau);
+
+    if (islandId === null) return; // If no valid islandId, return
+
     if (selectedPulau === pulau) {
       setIsSlideVisible(false);
       setTimeout(() => {
@@ -26,22 +55,33 @@ const Peta = () => {
       }, 300);
     } else {
       setIsSlideVisible(false);
-      setTimeout(() => {
+      setTimeout(async () => {
         setSelectedPulau(pulau);
-        setBatikData(pulauData[pulau]);
-        setIsSlideVisible(true);
+
+        // Fetch batik data for the selected island using the API
+        try {
+          const response = await axios.get(`/api/batiks?island=${islandId}`);
+          setBatikData(response.data.data); // Assume API response contains a `data` array
+        } catch (error) {
+          console.error('Error fetching batik data:', error);
+          setBatikData([]); // Set to empty array on error
+        } finally {
+          setIsSlideVisible(true);
+        }
       }, 300);
     }
   };
 
   return (
-    <section className="w-full px-4 md:px-10 py-4 mb-20">
+    <section className="w-full px-4 md:px-10 py-4 my-20">
+      <div className="flex justify-center mb-10">
+        <div className="bg-[#fef1e2] px-12 py-3 rounded-3xl shadow-2xl text-lg md:text-xl lg:text-2xl lg:px-16 font-sofiasans">Knowledge</div>
+      </div>
       <h2 className="text-center my-3 font-vidaloka text-3xl md:text-5xl">Kenali Batik Daerahmu</h2>
 
-      {/* Large screen layout: maintain the original design */}
+      {/* Large screen layout */}
       <div className="hidden lg:flex justify-center">
         <div className="bg-gradient-to-b from-[#fef1e2] to-[#f9d5b6] w-[1100px] h-[500px] flex relative py-20 rounded-[50px] shadow-xl z-30">
-          {/* Gambar Peta Pulau dengan animasi opacity dan hover yang smooth */}
           <img
             src={sumatra}
             alt="sumatra"
@@ -124,41 +164,66 @@ const Peta = () => {
             <img
               src={sumatra}
               alt="sumatra"
-              className={`transition-transform duration-300 ease-in-out cursor-pointer ${selectedPulau && selectedPulau !== 'Sumatra' ? 'opacity-40' : 'opacity-100'}`}
+              className={`transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 cursor-pointer ${selectedPulau && selectedPulau !== 'Sumatra' ? 'opacity-40' : 'opacity-100'}`}
               onClick={() => handlePulauClick('Sumatra')}
             />
-            <img src={jawa} alt="jawa" className={`transition-transform duration-300 ease-in-out cursor-pointer ${selectedPulau && selectedPulau !== 'Jawa' ? 'opacity-40' : 'opacity-100'}`} onClick={() => handlePulauClick('Jawa')} />
+            <img
+              src={jawa}
+              alt="jawa"
+              className={`transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 cursor-pointer ${selectedPulau && selectedPulau !== 'Jawa' ? 'opacity-40' : 'opacity-100'}`}
+              onClick={() => handlePulauClick('Jawa')}
+            />
             <img
               src={kalimantan}
               alt="kalimantan"
-              className={`transition-transform duration-300 ease-in-out cursor-pointer ${selectedPulau && selectedPulau !== 'Kalimantan' ? 'opacity-40' : 'opacity-100'}`}
+              className={`transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 cursor-pointer ${selectedPulau && selectedPulau !== 'Kalimantan' ? 'opacity-40' : 'opacity-100'}`}
               onClick={() => handlePulauClick('Kalimantan')}
             />
             <img
               src={maluku}
               alt="maluku"
-              className={`transition-transform duration-300 ease-in-out cursor-pointer ${selectedPulau && selectedPulau !== 'Maluku' ? 'opacity-40' : 'opacity-100'}`}
+              className={`transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 cursor-pointer ${selectedPulau && selectedPulau !== 'Maluku' ? 'opacity-40' : 'opacity-100'}`}
               onClick={() => handlePulauClick('Maluku')}
             />
-            <img src={ntb} alt="ntb" className={`transition-transform duration-300 ease-in-out cursor-pointer ${selectedPulau && selectedPulau !== 'NTB' ? 'opacity-40' : 'opacity-100'}`} onClick={() => handlePulauClick('NTB')} />
+            <img
+              src={ntb}
+              alt="ntb"
+              className={`transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 cursor-pointer ${selectedPulau && selectedPulau !== 'NTB' ? 'opacity-40' : 'opacity-100'}`}
+              onClick={() => handlePulauClick('NTB')}
+            />
             <img
               src={sulawesi}
               alt="sulawesi"
-              className={`transition-transform duration-300 ease-in-out cursor-pointer ${selectedPulau && selectedPulau !== 'Sulawesi' ? 'opacity-40' : 'opacity-100'}`}
+              className={`transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 cursor-pointer ${selectedPulau && selectedPulau !== 'Sulawesi' ? 'opacity-40' : 'opacity-100'}`}
               onClick={() => handlePulauClick('Sulawesi')}
             />
-            <img src={ntt} alt="ntt" className={`transition-transform duration-300 ease-in-out cursor-pointer ${selectedPulau && selectedPulau !== 'NTT' ? 'opacity-40' : 'opacity-100'}`} onClick={() => handlePulauClick('NTT')} />
-            <img src={bali} alt="bali" className={`transition-transform duration-300 ease-in-out cursor-pointer ${selectedPulau && selectedPulau !== 'Bali' ? 'opacity-40' : 'opacity-100'}`} onClick={() => handlePulauClick('Bali')} />
-            <img src={papua} alt="papua" className={`transition-transform duration-300 ease-in-out cursor-pointer ${selectedPulau && selectedPulau !== 'Papua' ? 'opacity-40' : 'opacity-100'}`} onClick={() => handlePulauClick('Papua')} />
+            <img
+              src={ntt}
+              alt="ntt"
+              className={`transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 cursor-pointer ${selectedPulau && selectedPulau !== 'NTT' ? 'opacity-40' : 'opacity-100'}`}
+              onClick={() => handlePulauClick('NTT')}
+            />
+            <img
+              src={bali}
+              alt="bali"
+              className={`transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 cursor-pointer ${selectedPulau && selectedPulau !== 'Bali' ? 'opacity-40' : 'opacity-100'}`}
+              onClick={() => handlePulauClick('Bali')}
+            />
+            <img
+              src={papua}
+              alt="papua"
+              className={`transition-all duration-500 ease-in-out transform hover:scale-110 hover:opacity-100 cursor-pointer ${selectedPulau && selectedPulau !== 'Papua' ? 'opacity-40' : 'opacity-100'}`}
+              onClick={() => handlePulauClick('Papua')}
+            />
           </div>
         </div>
       </div>
 
-      {/* Wrapper untuk Nama-nama pulau */}
+      {/* Wrapper for island names */}
       <div className="flex justify-center mt-10">
         <div className="bg-[#fef1e2] w-full md:max-w-[700px] lg:max-w-[1100px] -mt-20 pb-4 pt-14 rounded-b-[30px]">
-          <div className="flex flex-wrap justify-center text-center text-lg font-vidaloka">
-            {Object.keys(pulauData).map((pulau) => (
+          <div className="flex flex-wrap justify-center text-center text-lg lg:text-2xl font-vidaloka">
+            {['Sumatra', 'Jawa', 'Kalimantan', 'Maluku', 'NTB', 'Sulawesi', 'NTT', 'Bali', 'Papua'].map((pulau) => (
               <span key={pulau} className={`cursor-pointer mx-3 font-sofiasans ${selectedPulau === pulau ? 'text-red-600' : ''}`} onClick={() => handlePulauClick(pulau)}>
                 {pulau}
               </span>
@@ -167,49 +232,43 @@ const Peta = () => {
         </div>
       </div>
 
-      {/* Section Batik dengan Slide Down */}
+      {/* Display batik data */}
       <div
         className={`overflow-hidden rounded-b-3xl w-full md:max-w-[700px] lg:max-w-[1100px] mx-auto -translate-y-6 z-0 relative transition-all duration-500 ease-in-out ${
-          isSlideVisible ? 'max-h-full opacity-100 bg-[#fef1e2] py-6' : 'max-h-0 opacity-0'
+          isSlideVisible ? 'max-h-full opacity-100 bg-[#fef1e2] mt-2 py-6' : 'max-h-0 opacity-0'
         }`}
       >
         {batikData && batikData.length > 0 ? (
           <div className="mt-8">
             <h2 className="text-center font-vidaloka text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-4 sm:mb-6 md:mb-8 lg:mb-10">Pulau {selectedPulau}</h2>
-
-            {/* Flex untuk gambar di kiri dan deskripsi di kanan */}
             <div className="grid grid-cols-1 gap-6 px-4 sm:px-6 lg:px-28">
               {batikData.slice(0, 3).map((batik, index) => (
                 <div key={index} className="flex flex-col md:flex-row items-center md:items-start mb-8 sm:mb-10 md:mb-14">
-                  {/* Gambar Batik di Kiri */}
                   <div className="w-full md:w-1/2 mb-4 md:mb-0">
-                    <img src={batik.image} alt={batik.nama} className="rounded-2xl w-full max-w-[300px] md:max-w-[350px] lg:max-w-[400px] mx-auto" />
+                    <img src={batik.link_image} alt={batik.name} className="rounded-2xl w-full max-h-56 max-w-[300px] md:max-w-[350px] lg:max-w-[400px] mx-auto" />
                   </div>
-
-                  {/* Deskripsi di Kanan */}
                   <div className="w-full md:w-1/2 text-center md:text-left md:pl-8">
-                    <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-vidaloka">{batik.nama}</p>
+                    <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-vidaloka">{batik.name}</p>
                     <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-vidaloka mb-4 sm:mb-6 lg:mb-8">
-                      {batik.kota}, {batik.asal}
+                      {batik.city}, {batik.province}
                     </p>
-                    <p className="underline cursor-pointer text-sm sm:text-base md:text-lg" onClick={() => navigate(`/overview/${encodeURIComponent(batik.nama)}`)}>
-                      Klik disini untuk pelajari batik ini lebih lanjut {'>'}
-                    </p>
+                    <button className="cursor-pointer px-2 py-2 rounded-xl text-white bg-[#E4676C] text-sm sm:text-base md:text-lg" onClick={() => navigate(`/overview/${batik.id}`)}>
+                      Pelajari Batik Ini Lebih Lanjut
+                    </button>
                   </div>
                 </div>
               ))}
-              {/* Link to see more batik */}
               {batikData.length > 3 && (
                 <div className="text-center mb-5">
-                  <button className="text-base lg:text-2xl md:text-xl font-bold font-vidaloka" onClick={() => navigate(`/catalog?pulau=${selectedPulau}`)}>
-                    Lihat lebih banyak batik dari pulau {selectedPulau} {'>'}
+                  <button className="text-base bg-[#f9d5b6] px-3 py-2 lg:text-2xl md:text-xl rounded-xl font-vidaloka" onClick={() => navigate(`/catalog?pulau=${selectedPulau}`)}>
+                    Klik untuk melihat batik {selectedPulau} lebih banyak
                   </button>
                 </div>
               )}
             </div>
           </div>
         ) : (
-          <div className="text-center py-10"></div>
+          <p></p>
         )}
       </div>
     </section>

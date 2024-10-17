@@ -11,7 +11,7 @@ const batiksData = [
     asal: 'DI Yogyakarta',
     kota: 'Yogyakarta',
     image: batik1,
-    filosofi: 'Batik Parang melambangkan kekuatan, keteguhan, serta perjuangan yang tidak pernah putus.',
+    filosofi: '`Batik Parang melambangkan kekuatan, keteguhan, serta perjuangan yang tidak pernah putus.`',
     caraMembuat: 'Batik Parang dibuat dengan teknik cap dan tulis, menggunakan malam pada kain mori yang kemudian dicelup ke dalam pewarna alami.',
   },
   {

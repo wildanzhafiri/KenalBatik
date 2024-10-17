@@ -1,144 +1,264 @@
 import React, { useState, useEffect } from 'react';
-import kuisData from '../components/data/KuisData';
+import axios from 'axios';
 import Navbar from '../components/Navbar';
 import badge from '../assets/Tier 5.svg';
-import done from '../assets/done.svg';
+import profil from '../assets/profil.svg';
+import CircularProgressBar from '../components/CircularProgressBar';
 
 function Kuis() {
-  const [answers, setAnswers] = useState(Array(kuisData.length).fill(null));
+  const [quizData, setQuizData] = useState([]); // Data kuis dari server
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [userAnswers, setUserAnswers] = useState([]); // Untuk menampung jawaban user
   const [score, setScore] = useState(0);
+  const [questionsAnswered, setQuestionsAnswered] = useState(0);
+  const [correctAnswers, setCorrectAnswers] = useState(0);
   const [isQuizCompleted, setIsQuizCompleted] = useState(false);
-  const totalPoints = kuisData.reduce((acc, question) => acc + question.points, 0);
+  const [timeLeft, setTimeLeft] = useState(5 * 60); // Waktu tersisa dalam detik (5 menit = 5 * 60 detik)
+  const [isSignUpOpen, setIsSignUpOpen] = useState(false);
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const totalPoints = quizData.length * 10; // Anggap setiap soal memiliki nilai 10 poin
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [quizCheck, setQuizCheck] = useState([]);
+  // Hitung akurasi
+  const accuracy = questionsAnswered > 0 ? Math.round((correctAnswers / questionsAnswered) * 100) : 0;
 
-  const handleAnswerClick = (selectedAnswer, questionIndex) => {
-    const correctAnswer = kuisData[questionIndex].correctAnswer;
-    const currentAnswer = answers[questionIndex];
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      setIsLoggedIn(true);
+      fetchUserProfile(token); // Panggil fungsi untuk memuat profil
+    }
+  }, []);
 
-    let updatedAnswers = [...answers];
-
-    // Jika jawaban yang sama diklik dua kali, hapus jawaban
-    if (currentAnswer === selectedAnswer) {
-      updatedAnswers[questionIndex] = null;
-      setAnswers(updatedAnswers);
-
-      // Kurangi skor jika jawaban benar sebelumnya
-      if (selectedAnswer === correctAnswer) {
-        setScore(score - kuisData[questionIndex].points);
-      }
-    } else {
-      // Update jawaban pengguna
-      updatedAnswers[questionIndex] = selectedAnswer;
-      setAnswers(updatedAnswers);
-
-      // Update skor hanya jika jawaban benar
-      if (selectedAnswer === correctAnswer && currentAnswer !== correctAnswer) {
-        setScore(score + kuisData[questionIndex].points);
-      } else if (currentAnswer === correctAnswer) {
-        // Jika jawaban lama benar, kurangi skor karena diganti dengan jawaban yang salah
-        setScore(score - kuisData[questionIndex].points);
-      }
+  const fetchUserProfile = async (token) => {
+    try {
+      const response = await axios.get('/api/users/profile', {
+        headers: {
+          Authorization: `Bearer ${token}`, // Kirim token sebagai header Authorization
+        },
+      });
+      setUserData(response.data.data);
+      // Set data pengguna dari respons API
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
     }
   };
 
-  const handleSubmit = () => {
-    // Pastikan semua pertanyaan telah dijawab sebelum menyelesaikan kuis
-    const allAnswered = answers.every((answer) => answer !== null);
-    if (allAnswered) {
-      setIsQuizCompleted(true);
-    } else {
-      alert('Silakan jawab semua pertanyaan sebelum menyelesaikan kuis.');
-    }
+  const toggleLoginPopup = () => {
+    setIsLoginOpen(!isLoginOpen);
+  };
+
+  const toggleSignUpPopup = () => {
+    setIsSignUpOpen(!isSignUpOpen);
+    setIsLoginOpen(false);
+  };
+
+  const toggleForgotPasswordPopup = () => {
+    setIsForgotPasswordOpen(!isForgotPasswordOpen);
+    setIsLoginOpen(false);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUserData(null); // Hapus data pengguna setelah logout
+    localStorage.removeItem('authToken'); // Hapus token dari localStorage
+    window.location.reload(); // Refresh page setelah logout
+  };
+
+  const handleLogin = (token) => {
+    localStorage.setItem('authToken', token); // Simpan token ke localStorage
+    setIsLoggedIn(true);
+    fetchUserProfile(token); // Ambil data pengguna setelah login
+    setIsLoginOpen(false);
   };
 
   useEffect(() => {
-    if (isQuizCompleted) {
-      const progressBar = document.querySelector('.progress-bar-inner');
-      progressBar.style.width = `${(score / totalPoints) * 100}%`;
+    const fetchQuizData = async () => {
+      try {
+        const token = localStorage.getItem('authToken'); // Ambil token dari localStorage
+        if (!token) {
+          console.error('No token found. Please log in.');
+          return;
+        }
+
+        const response = await axios.get('/api/quizzes', {
+          headers: {
+            Authorization: `Bearer ${token}`, // Kirim token dalam header Authorization
+          },
+        });
+        setQuizData(response.data.data);
+      } catch (error) {
+        console.error('Error fetching quiz data:', error);
+      }
+    };
+    fetchQuizData();
+  }, []);
+
+  // Fungsi untuk menghitung waktu mundur
+  useEffect(() => {
+    if (timeLeft === 0) {
+      setIsQuizCompleted(true); // Ketika waktu habis, tampilkan hasil kuis
     }
-  }, [isQuizCompleted, score, totalPoints]);
+
+    const timer = timeLeft > 0 && !isQuizCompleted && setInterval(() => setTimeLeft(timeLeft - 1), 1000);
+
+    return () => clearInterval(timer); // Bersihkan interval saat komponen dibongkar atau waktu habis
+  }, [timeLeft, isQuizCompleted]);
+
+  // Format waktu ke dalam bentuk MM:SS
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes < 10 ? '0' : ''}${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+  };
+
+  const handleAnswerClick = (selectedAnswer) => {
+    const updatedAnswers = [...userAnswers];
+    updatedAnswers[currentQuestion] = { quiz_id: quizData[currentQuestion].id, user_answer: selectedAnswer };
+    setUserAnswers(updatedAnswers);
+    setQuestionsAnswered(questionsAnswered + 1);
+
+    if (currentQuestion < quizData.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      setIsQuizCompleted(true);
+      checkQuizAnswers(updatedAnswers); // Panggil fungsi untuk memeriksa jawaban di akhir kuis
+    }
+  };
+
+  const checkQuizAnswers = async (answers) => {
+    const token = localStorage.getItem('authToken'); // Ambil token dari localStorage
+    if (!token) {
+      console.error('No token found. Please log in.');
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        'api/quizzes/check',
+        {
+          quiz_id: answers.map((answer) => answer.quiz_id),
+          user_answer: answers.map((answer) => answer.user_answer),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Kirim token dalam header Authorization
+          },
+        }
+      );
+
+      setQuizCheck(response.data.data);
+      console.log(response.data.data);
+    } catch (error) {
+      console.error('Error checking quiz answers:', error);
+    }
+  };
 
   return (
-    <div>
-      <Navbar />
-      <div className="flex flex-col items-center justify-center mt-10 p-4">
+    <div className="w-full">
+      <Navbar onLoginClick={toggleLoginPopup} isLoggedIn={isLoggedIn} onLogout={handleLogout} userData={userData} />
+      {isLoginOpen && <LoginPopup onClose={toggleLoginPopup} onLogin={handleLogin} onSignUpClick={toggleSignUpPopup} onForgotPasswordClick={toggleForgotPasswordPopup} />}
+      {isSignUpOpen && <SignUpPopup onClose={toggleSignUpPopup} />}
+      {isForgotPasswordOpen && <ForgotPasswordPopup onClose={toggleForgotPasswordPopup} />}
+      <div className="">
         {!isQuizCompleted ? (
-          <div className="w-full max-w-4xl mx-auto shadow-lg rounded-lg p-4 flex flex-col gap-10">
-            {kuisData.map((questionData, questionIndex) => (
-              <div key={questionIndex} className="w-full max-w-4xl md:max-w-[700px] lg:max-w-[1000px] shadow-lg rounded-lg p-4 flex flex-col md:flex-row justify-between mx-auto">
-                {/* Pertanyaan */}
-                <div className="w-full md:w-1/2 md:pr-4 mb-4 md:mb-0 h-full flex flex-col justify-center">
-                  <div className="flex justify-between mb-4 lg:text-xl">
+          <div className="flex flex-col items-center justify-center lg:justify-start lg:mt-14 min-h-screen p-4  lg:mx-32 xl:mx-56">
+            <div className="px-7 shadow-2xl mb-3 md:mb-5 md:text-xl lg:text-2xl py-2 bg-[#fef1e2] rounded-3xl">sesi kuis</div>
+            <p className="text-lg md:text-2xl text-center mb-3 md:mb-5">{formatTime(timeLeft)}</p>
+            {quizData.length > 0 && (
+              <div className="w-full mx-auto shadow-xl p-6 flex flex-col lg:flex-row gap-10 justify-between rounded-3xl lg:items-start bg-[#f6f2ed]">
+                {/* Bagian Pertanyaan */}
+                <div className="w-full lg:w-1/2 flex flex-col justify-center items-start">
+                  <div className="flex justify-between w-full mb-4 md:text-xl lg:text-2xl">
                     <span>
-                      0{questionIndex + 1}/{kuisData.length}
+                      {currentQuestion + 1}/{quizData.length}
                     </span>
-                    <span>Pertanyaan {questionIndex + 1}</span>
-                    <span>{questionData.points} Poin</span>
+                    <span>Pertanyaan {currentQuestion + 1}</span>
                   </div>
-                  <div className="w-full border-[0.5px] border-black/50 mb-2"></div>
+                  <div className="w-full border-[0.5px] border-black/50 mb-4"></div>
 
-                  <h2 className="font-vidaloka tracking-wider text-2xl lg:text-3xl font-bold mb-4">{questionData.question}</h2>
+                  <h2 className="font-vidaloka tracking-wider text-2xl md:text-3xl lg:text-4xl font-bold mb-6">{quizData[currentQuestion].question}</h2>
                 </div>
 
-                {/* Opsi jawaban */}
-                <div className="w-full md:w-1/2 flex flex-col h-full justify-center">
+                {/* Bagian Jawaban */}
+                <div className="w-full lg:w-1/2 flex flex-col justify-center items-center">
                   <div className="grid grid-cols-1 gap-4 w-full">
-                    {questionData.options.map((option, index) => (
+                    {['A', 'B', 'C', 'D'].map((option, index) => (
                       <button
                         key={index}
-                        className={`font-vidaloka border rounded-2xl text-lg lg:text-2xl py-2 px-4 w-full bg-[#f8a071]/30 ${answers[questionIndex] === option ? 'bg-green-300' : ''}`}
-                        onClick={() => handleAnswerClick(option, questionIndex)}
+                        className={`font-vidaloka border border-[#f8a071] rounded-full text-lg md:text-2xl lg:text-4xl py-2 px-4 w-full bg-[#f8a071]/30 hover:bg-[#f8a071]/50 transition duration-300 ease-in-out ${
+                          userAnswers[currentQuestion]?.user_answer === option ? 'bg-[#37B991]' : ''
+                        }`}
+                        onClick={() => handleAnswerClick(option)}
                       >
-                        {option}
+                        {quizData[currentQuestion][`option_${option.toLowerCase()}`]}
                       </button>
                     ))}
                   </div>
                 </div>
               </div>
-            ))}
-
-            {/* Tombol submit */}
-            <div className="w-full flex justify-center">
-              <button
-                className={`bg-green-500 text-white font-semibold py-2 px-6 rounded-lg hover:bg-green-600 ${answers.includes(null) ? 'opacity-50 cursor-not-allowed' : ''}`}
-                onClick={handleSubmit}
-                disabled={answers.includes(null)} // Disable button jika ada soal yang belum dijawab
-              >
-                Selesai
-              </button>
-            </div>
+            )}
           </div>
         ) : (
-          <div className="h-full">
-            <div className="text-center">
-              <h2 className="text-3xl font-bold mb-5 md:text-4xl lg:text-7xl">Kerja bagus!</h2>
-              <p className="text-xl mb-3 md:text-2xl lg:text-3xl">Kamu mendapatkan {score} Poin</p>
-              <div className="flex justify-center relative mb-5 lg:mb-0">
-                <div className="w-44 h-44 md:w-56 md:h-56 lg:w-80 lg:h-80 rounded-full bg-orange-400 border-white border-[10px] flex justify-center items-center">
-                  <img src={done} className="w-24 h-24 md:w-28 md:h-28 lg:w-44 lg:h-44" />
-                </div>
-              </div>
-              {/* Progress bar */}
-              <div className="flex flex-col items-center">
-                <div className="flex">
-                  <div className="flex basis-3/4 items-end">
-                    <div>
-                      <p className="font-semibold text-end text-lg lg:text-2xl mb-2">Batik Pemula</p>
+          <div className="w-full mt-20">
+            <div className="flex flex-col mx-4 md:mx-10 lg:flex-row lg:mx-32 lg:gap-16">
+              {/* Left Section (Profile and Progress) */}
+              <div className="flex flex-col basis-full lg:basis-1/2 mb-10 lg:mb-0">
+                <div className="flex flex-col justify-center bg-[#FFDFAD61] p-7 rounded-3xl">
+                  <div className="flex flex-col justify-center items-center">
+                    <img src={profil} alt="User Avatar" className="w-24 h-24 rounded-full border-4 border-white" />
+                    <h2 className="text-3xl font-bold mt-3 mb-6">{userData.username}</h2>
+                  </div>
 
-                      <div className="flex">
-                        <p className="mr-2 text-lg lg:text-2xl">
-                          {score}/{totalPoints}
-                        </p>
-                        <div className="relative w-[200px] md:w-[500px] lg:w-[900px] bg-gray-300 rounded-full h-6">
-                          <div className="absolute top-0 left-0 h-6 bg-green-500 rounded-full progress-bar-inner transition-all duration-500" style={{ width: 0 }}></div>
+                  <CircularProgressBar accuracy={(quizCheck.current_correct_answer / 5) * 100} />
+
+                  <div className="flex flex-col items-center mt-6 w-full">
+                    <div className="flex flex-row items-center gap-2 md:gap-0 w-full">
+                      <div className="basis-4/5">
+                        <p className="font-semibold text-end text-lg lg:text-2xl">{quizCheck.user_tier}</p>
+                        <div className="w-full flex items-center justify-between">
+                          {/* Experience text */}
+                          <p className="mr-4 text-lg lg:text-2xl  whitespace-nowrap">
+                            {quizCheck.user_experience} / {quizCheck.exp_to_next_tier}
+                          </p>
+
+                          {/* Progress bar */}
+                          <div className="w-full bg-[#D9D9D9] rounded-full h-4">
+                            <div className="h-4 bg-green-500 rounded-full" style={{ width: `${(quizCheck.user_experience / quizCheck.exp_to_next_tier) * 100}%` }}></div>
+                          </div>
                         </div>
+                      </div>
+
+                      <div className="w-full basis-1/5 flex justify-center items-center sm:items-end">
+                        <img src={quizCheck.tier_photo_link} alt="Batik Pemula" className="w-16 h-16 md:w-20 md:h-20" />
                       </div>
                     </div>
                   </div>
+                </div>
 
-                  <div className="flex basis-1/4 justify-center">
-                    <img src={badge} alt="Batik Pemula" className="w-14 h-14 lg:w-24 lg:h-24 ml-4" />
+                {/* Additional Stats Section */}
+                <div className="flex justify-around w-full mt-10 gap-6 bg-[#FFDFAD61] lg:mb-16 rounded-3xl p-7 font-vidaloka">
+                  <div className="text-center">
+                    <p className="text-base md:text-lg text-start font-semibold mb-2">Banyak Soal</p>
+                    <p className="text-start text-4xl md:text-5xl">5</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-base md:text-lg text-start font-semibold mb-2">Jawaban Benar</p>
+                    <p className="text-start text-4xl md:text-5xl">{quizCheck.current_correct_answer} </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-base md:text-lg text-start font-semibold mb-2">Akurasi Jawaban</p>
+                    <p className="text-start text-4xl md:text-5xl">{(quizCheck.current_correct_answer / 5) * 100}%</p>
                   </div>
                 </div>
+              </div>
+
+              {/* Right Section (Text Content) */}
+              <div className="basis-full lg:basis-1/2 flex flex-col my-10 lg:items-start">
+                <p className="text-4xl md:text-5xl lg:text-7xl mb-3 font-vidaloka text-center lg:text-left">Kamu Sudah di Jalur yang Tepat!</p>
+                <p className="text-xl md:text-2xl lg:text-3xl text-center lg:text-left">Pengetahuanmu tentang batik sudah luar biasa. Dengan sedikit usaha lagi, kamu bisa jadi ahli!</p>
               </div>
             </div>
           </div>

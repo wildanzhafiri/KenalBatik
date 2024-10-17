@@ -5,6 +5,7 @@ export default {
     extend: {
       backgroundImage: {
         'bg-pattern': "url('/src/assets/Body2.png')",
+        'bg-hero': "url('/src/assets/background-hero.png')",
       },
       keyframes: {
         'fade-in': {
@@ -20,7 +21,21 @@ export default {
       vidaloka: ['Vidaloka', 'sans-serif'],
       upakarti: ['Upakarti', 'sans-serif'],
       sofiasans: ['Sofia Sans', 'sans-serif'],
+      lato: ['Lato'],
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities }) {
+      const newUtilities = {
+        '.scrollbar-hide': {
+          '&::-webkit-scrollbar': {
+            display: 'none',
+          },
+          '-ms-overflow-style': 'none',
+          'scrollbar-width': 'none',
+        },
+      };
+      addUtilities(newUtilities);
+    },
+  ],
 };

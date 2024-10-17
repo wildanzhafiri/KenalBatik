@@ -5,6 +5,7 @@ import Overview from './pages/Overview';
 import TentangKita from './pages/TentangKita';
 import Kuis from './pages/Kuis';
 import Cerita from './pages/Cerita';
+import PreQuiz from './pages/PreQuiz';
 import ScrollToTop from './components/ScrollToTop';
 
 function App() {
@@ -16,7 +17,8 @@ function App() {
         <Route path="/catalog" element={<Catalog />} />
         <Route path="/tentangkita" element={<TentangKita />} />
         <Route path="/kuis" element={<Kuis />} />
-        <Route path="/overview/:batikName" element={<Overview />} />
+        <Route path="/prequiz" element={<PreQuiz />} />
+        <Route path="/overview/:id" element={<Overview />} />
         <Route path="/cerita" element={<Cerita />} />
         <Route path="/tentangkita" element={<TentangKita />} />
       </Routes>

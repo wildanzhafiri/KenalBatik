@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom';
 const Footer = () => {
   const navigate = useNavigate();
   return (
-    <footer className="mt-20">
+    <footer>
       {/* Bagian Utama Footer */}
-      <div className="w-full bg-gradient-to-b from-[#f9f9f9] to-[#ffffff] mx-auto text-center flex flex-col justify-center items-center rounded-t-[100px] md:rounded-t-[250px] py-12 md:py-16 lg:py-20 px-6 sm:px-10 lg:px-24 shadow-lg overflow-hidden">
+      <div className="w-full bg-gradient-to-b from-[#f9f9f9] to-[#ffffff] mx-auto text-center flex flex-col justify-center items-center py-12 md:py-16 lg:py-20 px-6 sm:px-10 lg:px-24">
         <h4 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl w-full sm:w-3/4 md:w-2/3 font-vidaloka mb-4 lg:mb-6 text-gray-900">Berakar pada Budaya, Digerakkan oleh Inovasi.</h4>
         <p className="text-base sm:text-lg md:text-xl lg:text-2xl w-full sm:w-[500px] md:w-[600px] lg:w-[800px] font-light text-gray-700 mb-6 lg:mb-8">
           Kenal Batik adalah inisiatif non-profit yang bertujuan mengenalkan batik sebagai warisan budaya bangsa. Kami percaya bahwa setiap motif memiliki cerita, dan melalui pendekatan yang kreatif, kami ingin masyarakat lebih memahami dan

@@ -1,16 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Logo from '../assets/logo.svg';
 import { NavLink } from 'react-router-dom';
 import Profil from '../components/Profil';
-import { useState } from 'react';
 
-const Navbar = ({ onLoginClick, isLoggedIn, onLogout }) => {
+const Navbar = ({ onLoginClick, onLogout, isLoggedIn, userData }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isProfilOpen, setIsProfilOpen] = useState(false); // Tambahkan state untuk mengontrol drop-down profil
-
-  useEffect(() => {
-    console.log('Navbar isLoggedIn state:', isLoggedIn); // Debug untuk memantau perubahan
-  }, [isLoggedIn]);
+  const [isProfilOpen, setIsProfilOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -49,12 +44,12 @@ const Navbar = ({ onLoginClick, isLoggedIn, onLogout }) => {
               Tentang Kita
             </NavLink>
           </li>
-          {isLoggedIn ? (
+          {isLoggedIn && userData ? (
             <li className="relative">
               <button onClick={toggleProfil} className="hover:text-[#c95745]">
                 Profil
               </button>
-              {isProfilOpen && <Profil onLogout={onLogout} />}
+              {isProfilOpen && <Profil onLogout={onLogout} userData={userData} />}
             </li>
           ) : (
             <li>
@@ -89,14 +84,14 @@ const Navbar = ({ onLoginClick, isLoggedIn, onLogout }) => {
               Tentang Kita
             </NavLink>
           </li>
-          {isLoggedIn ? (
+          {isLoggedIn && userData ? (
             <li className="">
               <button onClick={toggleProfil} className="hover:text-[#c95745]">
                 Profil
               </button>
               {isProfilOpen && (
                 <div className="mt-4">
-                  <Profil onLogout={onLogout} />
+                  <Profil onLogout={onLogout} userData={userData} />
                 </div>
               )}
             </li>

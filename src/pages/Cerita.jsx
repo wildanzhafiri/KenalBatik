@@ -2,14 +2,90 @@ import Logo from '../assets/logo.svg';
 import Lampu from '../assets/lampu.png';
 import Footer from '../sections/Footer';
 import Navbar from '../components/Navbar';
+import LoginPopup from '../components/auth/LoginPopup';
+import SignUpPopup from '../components/auth/SignUpPopup';
+import ForgotPasswordPopup from '../components/auth/ForgotPasswordPopup';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import axios from 'axios';
 
 const Cerita = () => {
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isSignUpOpen, setIsSignUpOpen] = useState(false);
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState(null); // Menyimpan data pengguna
+
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      setIsLoggedIn(true);
+      fetchUserProfile(token); // Panggil fungsi untuk memuat profil
+    }
+  }, []);
+
+  const fetchUserProfile = async (token) => {
+    try {
+      const response = await axios.get('/api/users/profile', {
+        headers: {
+          Authorization: `Bearer ${token}`, // Kirim token sebagai header Authorization
+        },
+      });
+      setUserData(response.data.data);
+      // Set data pengguna dari respons API
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  };
+
+  const toggleLoginPopup = () => {
+    setIsLoginOpen(!isLoginOpen);
+  };
+
+  const toggleSignUpPopup = () => {
+    setIsSignUpOpen(!isSignUpOpen);
+    setIsLoginOpen(false);
+  };
+
+  const toggleForgotPasswordPopup = () => {
+    setIsForgotPasswordOpen(!isForgotPasswordOpen);
+    setIsLoginOpen(false);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUserData(null); // Hapus data pengguna setelah logout
+    localStorage.removeItem('authToken'); // Hapus token dari localStorage
+    window.location.reload(); // Refresh page setelah logout
+  };
+
+  const handleLogin = (token) => {
+    localStorage.setItem('authToken', token); // Simpan token ke localStorage
+    setIsLoggedIn(true);
+    fetchUserProfile(token); // Ambil data pengguna setelah login
+    setIsLoginOpen(false);
+  };
+
+  const quotesVariant = {
+    hidden: { opacity: 0, y: 100 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 1,
+      },
+    },
+  };
   return (
     <section className="w-full">
-      <Navbar />
-      <div className="my-5 mx-5 md:mx-10 lg:mx-20">
+      <Navbar onLoginClick={toggleLoginPopup} isLoggedIn={isLoggedIn} onLogout={handleLogout} userData={userData} />
+      {isLoginOpen && <LoginPopup onClose={toggleLoginPopup} onLogin={handleLogin} onSignUpClick={toggleSignUpPopup} onForgotPasswordClick={toggleForgotPasswordPopup} />}
+      {isSignUpOpen && <SignUpPopup onClose={toggleSignUpPopup} />}
+      {isForgotPasswordOpen && <ForgotPasswordPopup onClose={toggleForgotPasswordPopup} />}
+      <motion.div initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.2 }} variants={quotesVariant} className="my-5 mb-20 mx-5 md:mx-10 lg:mx-20">
         <h2 className="text-center font-vidaloka lg:text-5xl lg:mt-20 text-3xl md:text-4xl md:mt-10 lg:mb-10">Cerita di Balik Kenal Batik</h2>
-        <div className="lg:flex lg:items-center lg:mb-20">
+        <div className="lg:flex lg:items-center lg:mb-10">
           <div className="flex justify-center lg:basis-2/6">
             <img src={Logo} alt="logo" className="w-64 h-64 lg:w-80 lg:h-80" />
           </div>
@@ -50,7 +126,7 @@ const Cerita = () => {
             </p>
           </div>
         </div>
-      </div>
+      </motion.div>
       <Footer />
     </section>
   );
