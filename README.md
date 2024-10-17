@@ -26,7 +26,7 @@ Proyek ini bertujuan untuk mengenalkan batik dengan pendekatan yang berbeda, sek
 
 
 ## Website Kenal Batik
-Kenal Batik sudah memiliki websitenya sendiri. Websitenya dapat diakses [disini](https://kenal-batik-ez1sxd1ru-wildan-zhafiris-projects.vercel.app/)
+Kenal Batik sudah memiliki websitenya sendiri. Websitenya dapat diakses [disini](https://kenal-batik-jclqr15sb-wildan-zhafiris-projects.vercel.app/)
 
 ## How to use our website on localhost
 Untuk menjalankan kode kami, dibutuhkan 2 tools berikut:
