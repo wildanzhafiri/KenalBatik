@@ -24,7 +24,7 @@ const PreQuiz = () => {
 
   const fetchUserProfile = async (token) => {
     try {
-      const response = await axios.get('/api/users/profile', {
+      const response = await axios.get('http://20.2.139.54/api/v1//users/profile', {
         headers: {
           Authorization: `Bearer ${token}`, // Kirim token sebagai header Authorization
         },

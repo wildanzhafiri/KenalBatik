@@ -36,7 +36,7 @@ const Catalog = () => {
 
   const fetchUserProfile = async (token) => {
     try {
-      const response = await axios.get('/api/users/profile', {
+      const response = await axios.get('http://20.2.139.54/api/v1/users/profile', {
         headers: {
           Authorization: `Bearer ${token}`, // Kirim token sebagai header Authorization
         },
@@ -80,7 +80,7 @@ const Catalog = () => {
   // Fetch islands and provinces on component mount
   const fetchIslands = async () => {
     try {
-      const response = await axios.get('/api/islands');
+      const response = await axios.get('http://20.2.139.54/api/v1/islands');
       setIslands(response.data.data);
     } catch (error) {
       console.error('Error fetching islands:', error);
@@ -98,7 +98,7 @@ const Catalog = () => {
 
   const fetchBatiks = async () => {
     try {
-      const response = await axios.get('/api/batiks'); // Fetch all batik data
+      const response = await axios.get('http://20.2.139.54/api/v1/batiks'); // Fetch all batik data
       setBatikData(response.data.data); // Store batik data
     } catch (error) {
       console.error('Error fetching batik data:', error);
