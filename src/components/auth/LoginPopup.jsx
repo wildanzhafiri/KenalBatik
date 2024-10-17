@@ -13,7 +13,7 @@ const LoginPopup = ({ onClose, onSignUpClick, onForgotPasswordClick, onLogin }) 
   const handleGoogleLogin = async () => {
     try {
       // Panggil API OAuth login untuk mendapatkan URL redirect
-      const response = await axios.get('/api/users/oauth');
+      const response = await axios.get('http://20.2.139.54/api/v1//users/oauth');
 
       // Dapatkan URL redirect dari response
       const redirectUrl = response.data.data.redirect_link;
@@ -29,7 +29,7 @@ const LoginPopup = ({ onClose, onSignUpClick, onForgotPasswordClick, onLogin }) 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/users/login', {
+      const response = await axios.post('http://20.2.139.54/api/v1//users/login', {
         email: email, // Sesuaikan field dengan apa yang diharapkan oleh API
         password: password,
       });
